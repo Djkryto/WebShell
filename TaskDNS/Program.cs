@@ -1,4 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using TaskDNS.App;
+using TaskDNS.Channels.Interface;
+using TaskDNS.Channels.Models;
+using TaskDNS.Controllers;
 using TaskDNS.Models.SQLServer;
 using TaskDNS.SignalRHub;
 
@@ -6,8 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddSignalR();
 builder.Services.AddHostedService<Worker>();
+builder.Services.AddSingleton<CMD>();
 
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<CommandContext>(options => options.UseSqlServer(connection));

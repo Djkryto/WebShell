@@ -3,29 +3,31 @@ using Microsoft.AspNetCore.Mvc;
 using TaskDNS.Controllers.Interface;
 using TaskDNS.Models;
 using TaskDNS.Models.SQLServer;
+using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 using TaskDNS.App;
+using TaskDNS.Channels.Interface;
 
 namespace TaskDNS.Controllers
 {
     [Route("Server")]
     public class CommandController : Controller
     {
-        IRepositoryCommand dbCommand;
-
-        CMD cmd = new CMD();
-
-        public CommandController(CommandContext context)
+        public CommandController(CommandContext context,CMD cmd)
         {
             dbCommand = new SQLCommand(context);
+            this.cmd = cmd;
         }
+
+        IRepositoryCommand dbCommand;
+        CMD cmd;
 
         [HttpPost]
         [Route("Add")]
-        public JsonResult AddCommand([FromBody]Command command)
+        public async Task<JsonResult> AddCommand([FromBody]Command command)
         {
             cmd.Write(command.TextCommand);
-            cmd.Start();
+            await cmd.StartAsync();
             //////////////////////////////
             dbCommand.Add(command);
             dbCommand.Save();
@@ -39,6 +41,12 @@ namespace TaskDNS.Controllers
         {
             cmd.CloseProcess();
             return Task.CompletedTask;
+        }
+        [HttpGet]
+        [Route("Get_Path")]
+        public string GetPath()
+        {
+            return cmd.GetPath();
         }
 
         [HttpGet]

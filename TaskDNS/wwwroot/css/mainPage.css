@@ -1,15 +1,18 @@
 ﻿.history-command {
-    height: 700px;
-    width: 1000px;
-    border: 1px solid gray;
-    border-radius: 10px;
+    width:100%;
+    padding:0px;
+    margin:0px;
 }
 
 .input-command {
-    border: 1px solid gray;
+    display: table;
+    width: 100%;
+    border: none;
     border-radius: 10px;
+    outline:none;
     height: 35px;
-    width: 1000px;
+    background-color: black;
+    color:white;
 }
 
 .button-command {
@@ -30,23 +33,31 @@
     animation: spin 2s linear infinite;
 }
 
-.panelCommand {
-    position:relative;
-
-    display: flex;
-    flex: revert;
-    flex-direction:row;
-    justify-content:center;
-    
-    margin-right: 30px;
-
-    align-items:end;
-    margin-bottom: 20px;
-}
 .offLoading {
     visibility:hidden;
 }
 
+li {
+   list-style-type:none;
+    color:white;
+    text-align:left;
+    height: 25px;
+}
+.scrolle {
+    overflow-y: auto;
+
+}
+
+.red{
+    color: red;
+}
+
+.white {
+    color: white;
+}
+.fontSizePage{
+    font-size: 20px;
+}
 @keyframes spin {
     0% {
         transform: rotate(0deg);

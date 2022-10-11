@@ -1,6 +1,7 @@
 ﻿
-let historyCommand = document.getElementById("History");
+let historyCommand = document.getElementById("listOutputCommand");
 let inputCommand = document.getElementById("inputCommand");
+let allElement = document.getElementById("Console");
 
 let setCountPress = false;
 let countPress = 0;
@@ -8,12 +9,18 @@ let countPress = 0;
 let dataHistory;
 let hubConnection;
 
-const AddCommandAsync = async (dataTime, inputField, historyField) => {
+let command = "";
+let path;
+
+const AddCommandAsync = async (dataTime, inputField) => {
 
     let urlAdd = "https://localhost:7032/Server/Add";
     let commandJS = { id: 0, data: dataTime, textCommand: inputField };
 
-    historyField.value += inputField + "\n";
+    let li = document.createElement("li");
+    li.append(inputField + "\n")
+
+    historyCommand.appendChild(li); 
     /*site.SwitcStateLoader();*/
 
     if (inputField != "") {
@@ -26,7 +33,36 @@ const AddCommandAsync = async (dataTime, inputField, historyField) => {
     }
 }
 
-const getHistoryAsync = async (historyField) => {
+const postPathAsync = async (pathClient, inputField) => {
+
+    let urlAdd = "https://localhost:7032/Server/Change_Path";
+    let li = document.createElement("li");
+    li.append(inputField+ "\n")
+
+    historyCommand.appendChild(li);
+    if (inputField != "") {
+        await fetch(urlAdd, {
+            method: "POST",
+            redirect: "follow",
+            body: JSON.stringify(pathClient),
+            headers: { 'Content-Type': 'application/json' }
+        })
+    }
+
+    await getPathAsync();
+}
+
+const getPathAsync = async () => {
+    let url = "https://localhost:7032/Server/Get_Path";
+    let responce = await fetch(url);
+    let data = await responce.text();
+
+    path = data;
+    inputCommand.value = path + "\>";
+    
+}
+
+const getHistoryAsync = async () => {
 
     let urlHistory = "https://localhost:7032/Server/History"
     let response = await fetch(urlHistory);
@@ -35,24 +71,15 @@ const getHistoryAsync = async (historyField) => {
     dataHistory = data;
 
     for (let i in data) {
-        historyField.value += data[i].textCommand + "\n"
+        let li = document.createElement("li");
+        li.append( data[i].textCommand + "\n")
+
+        historyCommand.appendChild(li);
+        DownScrolle();
     }
-
-    DownScrolle();
+    getPathAsync();
 }
 
-const getOutputConsoleAsync = async (historyField) => {
-
-    setTimeout(
-        async function () {
-            let urlOutput = "https://localhost:7032/Server/Output"
-            let response = await fetch(urlOutput);
-            let data = await response.json();
-
-            historyField.value += data.textCommand;
-        }
-        , 100)
-}
 
 const connectToHub = async () => {
 
@@ -62,19 +89,20 @@ const connectToHub = async () => {
 
     hubConnection = hub;
 
-    hub.on("Send", function (data) { //Вывод данных консоли
-        historyCommand.value += data + "\n";
+    hub.on("Send", function (data) { //Вывод данных консоли 
+        console.log(data.status);
+        WriteHistoryCommand(data.status, data.output);
+        getPathAsync();
         DownScrolle();
-       
-    });
-
-    hub.on("FlagInputClient", function (data) { //Вывод данных 
-        if (data == false) {
-            inputCommand.onkeypress = () => { return false };
-            inputCommand.value = "";
+        if (data.status == 0) {
+            OffInput();
+        }
+        else {
+            OnInput();
         }
     });
 
+    inputCommand.value = path + "\>"
     hub.start()
 }
 
@@ -92,21 +120,8 @@ connectToHub();// Подключение к ChatHub
 
 inputCommand.onkeydown = () => { return checkKey(event.key) }; //подгрузка истории введенных команд из БД
 
+inputCommand.focus();
 //    hubConnection.invoke("Send", message); отправка данных
-
-
-document.getElementById("buttonCommand").onclick = async function Click() {
-    var date = new Date();
-
-    let dataTime = date.getDay() + "." + date.getMonth() + "." + date.getFullYear() +
-        " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-
-    let textInputCommand = inputCommand.value;
-
-    AddCommandAsync(dataTime, textInputCommand, historyCommand);
-
-    inputCommand.value = "";
-}
 
 
 function checkKey(key) {
@@ -116,24 +131,35 @@ function checkKey(key) {
         setCountPress = true;
     }//Проверка что нажата клавиша первый раз для вывода последней в истории команд
 
+    if (key == "Backspace") {
+        let lenghtInputCommand = inputCommand.value.length - 1;
+        if (inputCommand.value[lenghtInputCommand] == ">") {
+            return false;
+        }
+    }
+
     if (key == "ArrowUp") {
         countPress--;
         if (countPress < 0)
             countPress = 0
 
-        inputCommand.value = dataHistory[countPress].textCommand;
+        inputCommand.value = path + "\> " + dataHistory[countPress].textCommand;
     }
     else if (key == "ArrowDown") {
         countPress++;
         if (countPress > dataHistory.length - 1)
             countPress = dataHistory.length - 1
 
-        inputCommand.value = dataHistory[countPress].textCommand;
+        inputCommand.value = path + "\> " + dataHistory[countPress].textCommand;
     }
     if (key == "Enter") {
-        AddCommandAsync("Data", inputCommand.value, historyCommand.value)
+
         historyCommand.value += inputCommand.value + "\n" + "\n";
-        inputCommand.value = "";
+        getCommand(inputCommand.value)
+        AddCommandAsync("Data", command, historyCommand.value)
+        inputCommand.value = path + "\> ";
+
+        command = "";
     }
 
     if (key == "Control") { //Остановка команды
@@ -143,32 +169,63 @@ function checkKey(key) {
         connectToHub();
     }
 
-    if (key == "X" || key == "x") {
-        const hubConnection = new signalR.HubConnectionBuilder() //запуск подколючения к webSoket
-            .withUrl("/chat")
-            .build();
-
-        hubConnection.on("Send", function (data) { //Вывод данных 
-            historyCommand.value += data + "\n";
-            DownScrolle();
-        });
-
-        hubConnection.start();
+    if (inputCommand.value == "") {
+        inputCommand.value = path + "\>"
     }
-    return key
-}
-
-function SwitcStateLoader() {
-    let loader = document.getElementById("loading").classList;
-
-    if (loader.contains("offLoading")) {
-        loader.remove("offLoading");
-    }
-    else {
-        loader.add("offLoading");
-    }
+    return keys
 }
 
 function DownScrolle() {
-    historyCommand.scrollTop = historyCommand.scrollHeight;
+    window.scrollTo(0, document.body.scrollHeight);
+}
+
+function OffInput() {
+    inputCommand.onkeypress = () => { return false };
+}
+
+function OnInput() {
+    inputCommand.onkeypress = () => { return true };
+}
+
+function WriteHistoryCommand(status, dataText) {
+
+    if (status != 2) {
+
+        let li = document.createElement("li");
+        let pre = document.createElement("pre");
+
+        pre.append(dataText);
+        li.append(pre);
+
+        if (status == 1) {
+            li.classList.add("red");
+        } else {
+            li.classList.add("white");
+        }
+
+        historyCommand.appendChild(li);
+        DownScrolle();
+    }
+}
+
+
+function getCommand(inputCommandText) {
+
+    let isStartReadCommand;
+    let isReadComman;
+    let i = 0;
+
+    while (i != inputCommandText.length) {
+        if (inputCommandText[i] == ">") {
+            isStartReadCommand = true;
+            i++;
+        }
+        if (isStartReadCommand) {
+            if (inputCommandText[i] != " ")
+                isReadComman = true;
+            if (isReadComman)
+                command += inputCommandText[i];
+        }
+        i++;
+    }
 }
