@@ -10,12 +10,13 @@ let dataHistory;
 let hubConnection;
 
 let command = "";
+let childPath;
 let path;
 
 const AddCommandAsync = async (dataTime, inputField) => {
 
     let urlAdd = "https://localhost:7032/Server/Add";
-    let commandJS = { id: 0, data: dataTime, textCommand: inputField };
+    let commandJS = { id: 0, data: dataTime, textCommand: inputField.replace('\"', '') };
 
     let li = document.createElement("li");
     li.append(inputField + "\n")
@@ -37,7 +38,7 @@ const postPathAsync = async (pathClient, inputField) => {
 
     let urlAdd = "https://localhost:7032/Server/Change_Path";
     let li = document.createElement("li");
-    li.append(inputField+ "\n")
+    li.append(inputField)
 
     historyCommand.appendChild(li);
     if (inputField != "") {
@@ -53,6 +54,7 @@ const postPathAsync = async (pathClient, inputField) => {
 }
 
 const getPathAsync = async () => {
+
     let url = "https://localhost:7032/Server/Get_Path";
     let responce = await fetch(url);
     let data = await responce.text();
@@ -60,6 +62,18 @@ const getPathAsync = async () => {
     path = data;
     inputCommand.value = path + "\>";
     
+}
+
+const getPathChildDirectoryAsync = async () => {
+
+    let url = "https://localhost:7032/Server/Get_ChildPath";
+    let responce = await fetch(url);
+    let data = await responce.text();
+
+    childPath = data;
+    childPath = currentFolder(path, childPath);
+    inputCommand.value = path + "\>" + childPath;
+    inputCommand.focus();
 }
 
 const getHistoryAsync = async () => {
@@ -169,10 +183,14 @@ function checkKey(key) {
         connectToHub();
     }
 
+    if (key == "Alt") { //Остановка команды
+        getPathChildDirectoryAsync();
+    }
+
     if (inputCommand.value == "") {
         inputCommand.value = path + "\>"
     }
-    return keys
+    return key
 }
 
 function DownScrolle() {
@@ -228,4 +246,15 @@ function getCommand(inputCommandText) {
         }
         i++;
     }
+}
+
+function currentFolder(pathMain,pathChilder) {
+    let lineReturn = "";
+    for (let i = 0; i < pathChilder.length; i++) {
+        if (pathChilder[i] != pathMain[i]) {
+            lineReturn += pathChilder[i];
+        }
+    }
+    lineReturn = lineReturn.slice(0);
+    return lineReturn;
 }

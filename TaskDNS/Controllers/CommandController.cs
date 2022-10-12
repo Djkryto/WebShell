@@ -48,7 +48,12 @@ namespace TaskDNS.Controllers
         {
             return cmd.GetPath();
         }
-
+        [HttpGet]
+        [Route("Get_ChildPath")]
+        public string GetChildPath()
+        {
+            return cmd.GetChildPath();
+        }
         [HttpGet]
         [Route("History")]
         public JsonResult History()
