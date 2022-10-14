@@ -17,7 +17,7 @@ namespace TaskDNS.App
         private static string nextPath;
 
         private Process process;
-        private ProcessingCommand commandProcessing = new ProcessingCommand();
+        private ProcessingCommand getPath = new ProcessingCommand();
 
 
         public CMD()
@@ -51,7 +51,7 @@ namespace TaskDNS.App
 
         public async void Write(string command)
         {
-            nextPath = commandProcessing.Processing(path, command);
+            nextPath = getPath.Processing(path, command);
             ArgumentProcess(command);
         }
 
