@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\ProjectFiles\MyProject\TestGit\TaskDNS\bin\Release\net6.0\publish\</_PublishTargetUrl>
+    <History>True|2022-10-04T07:02:20.2359132Z;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>
