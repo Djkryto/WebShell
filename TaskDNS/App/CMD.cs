@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using TaskDNS.Channels;
 using TaskDNS.Channels.Interface;
 using TaskDNS.Channels.Models;
@@ -12,45 +13,52 @@ namespace TaskDNS.App
 {
     public class CMD
     {
-        private static int currentChildDirectory;
-        private static int IdProcess;
-        private static bool isActiveProcess;
-        private static string path;
-        private static string nextPath;
+        private delegate bool ConsoleCtrlDelegate(uint type);
+        [DllImport("kernel32.dll")]
+        private static extern bool SetConsoleCtrlHandler(ConsoleCtrlDelegate handler, bool add);
+        [DllImport("kernel32.dll")]
+        internal static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, int dwProcessGroupId);
 
-        private Process process;
-        private ProcessingCommand processing = new ProcessingCommand();
+        private static string _directory = @"C:\";
 
-        private StreamWriter streamWriter;
+        private static Process _process;
+        private static ProcessingCommand _processing = new ProcessingCommand();
+
         public CMD()
         {
-            StartProcess();
-
-            streamWriter = process.StandardInput;
-
-            path = @"C:\";
-            nextPath = "";
+            Start();
         }
 
-        public async void Write(string command)
+        public void Write(string command)
         {
-            nextPath = processing.Processing(path, command);
-            streamWriter.WriteLine(command);
+            _directory = _processing.Processing(_directory,command);
+            _process.StandardInput.WriteLine(command);
         }
-
-        public string GetPath()
+        /// <summary>
+        ///  Отправка клиенту текущую директорию.
+        /// </summary>
+        public string GetDirectory()
         {
-            return path;
+            return _directory;
         }
-
-        public string[] GetChildPath()
+        /// <summary>
+        ///  Отправляем клиенту список катологов текущей директории.
+        /// </summary>
+        public string[] GetDirectories()
         {
             return childDirecty();
         }
-
-        public async Task CloseProcess()
+        /// <summary>
+        ///  Остановка выполняемой команды.
+        /// </summary>
+        public void Stop()
         {
-            //
+            SetConsoleCtrlHandler(null, true);
+            GenerateConsoleCtrlEvent(0, _process.Id);
+            Thread.Sleep(10);
+            SetConsoleCtrlHandler(null, false);
+
+            SendOutputClient();
         }
 
         private async Task SendOutputClient()
@@ -58,34 +66,32 @@ namespace TaskDNS.App
             var complete = new Complete();
             await ChannelProvider.CommandChannel.Writer.WriteAsync(complete);
         }
-
+        /// <summary>
+        ///  Получаем список катологов из текущей директории.
+        /// </summary>
         private string[] childDirecty()
         {
-            DirectoryInfo mainDirectory = new DirectoryInfo(path);
+            DirectoryInfo mainDirectory = new DirectoryInfo(_directory);
             DirectoryInfo[] childDirectory = mainDirectory.GetDirectories();
             string[] chilldArray = childDirectory.Select(x => x.FullName).ToArray();
-
             return chilldArray;
         }
 
-        private void StartProcess() 
+        private void Start() 
         {
-            process = new Process();
+            _process = new Process();
 
-            process.StartInfo.FileName = "cmd.exe";
-
-            process.StartInfo.CreateNoWindow = false;
-            process.StartInfo.UseShellExecute = false;
-
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.RedirectStandardOutput = true;
-
-            process.StartInfo.WorkingDirectory = path;
+            _process.StartInfo.FileName = "cmd.exe";
+            _process.StartInfo.CreateNoWindow = false;
+            _process.StartInfo.UseShellExecute = false;
+            _process.StartInfo.RedirectStandardError = true;
+            _process.StartInfo.RedirectStandardInput = true;
+            _process.StartInfo.RedirectStandardOutput = true;
+            _process.StartInfo.WorkingDirectory = _directory;
             ///////////////////////////////////////////////////
             ///
             ///////////////////////////////////////////////
-            process.ErrorDataReceived += new DataReceivedEventHandler(async (sender, e) =>
+            _process.ErrorDataReceived += new DataReceivedEventHandler(async (sender, e) =>
             {
                 if (!String.IsNullOrEmpty(e.Data))
                 {
@@ -95,7 +101,7 @@ namespace TaskDNS.App
                 else await SendOutputClient();
             });
 
-            process.OutputDataReceived += new DataReceivedEventHandler(async (sender, e) =>
+            _process.OutputDataReceived += new DataReceivedEventHandler(async (sender, e) =>
             {
                 if (!String.IsNullOrEmpty(e.Data))
                 {
@@ -107,9 +113,9 @@ namespace TaskDNS.App
             //////////////////////////////////////
             ///
             ////////////////////////////////////
-            process.Start();
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+            _process.Start();
+            _process.BeginOutputReadLine();
+            _process.BeginErrorReadLine();
 
             SendOutputClient();
         }

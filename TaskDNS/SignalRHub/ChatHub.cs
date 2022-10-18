@@ -7,6 +7,9 @@ using TaskDNS.Controllers;
 
 namespace TaskDNS.SignalRHub
 {
+    /// <summary>
+    /// Общий узел пользователей
+    /// </summary>
     public class ChatHub : Hub
     {
         public override Task OnConnectedAsync()
@@ -19,7 +22,9 @@ namespace TaskDNS.SignalRHub
             return base.OnDisconnectedAsync(exception);
         }
     }
-
+    /// <summary>
+    /// Создание и настройка узла
+    /// </summary>
     public class Worker : BackgroundService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;

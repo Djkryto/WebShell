@@ -10,21 +10,26 @@ namespace TaskDNS.Tools
 {
     public class ProcessingCommand
     {
-        private const string root = @"C:\";
+        private const string Root = @"C:\";
 
-        public string Processing(string path, string command)
+        /// <summary>
+        /// Главный метод обработки команды.
+        /// </summary>
+        public string Processing(string currentDirectory, string command)
         {
             var isCD = isCommandCD(command);
             if (!isCD)
-                return path;
+                return currentDirectory;
 
             var localCommand = ClearCharacters(command);
 
             localCommand = ClearSpaceInPath(localCommand);
 
-            return ProcessingPath(path, localCommand); 
+            return ProcessingPath(currentDirectory, localCommand); 
         }
-
+        /// <summary>
+        /// Проверка на команду CD
+        /// </summary>
         private bool isCommandCD(string command)
         {
             command = ClearSpaceInPath(command);
@@ -35,38 +40,44 @@ namespace TaskDNS.Tools
             else
                 return false;
         }
-
+        /// <summary>
+        /// Обработка пути
+        /// </summary>
         private string ProcessingPath(string path, string command)
         {
-            if (command.Length == 1)// Перебор простых команд CD 
+            if (command.Length == 1)
             {
                 if(command[0] == '/')
-                    return root;
+                    return Root;
                 else
-                    return root;
+                    return Root;
             }
             else if (command.Length == 2)
             {
                 if (command == "..")
-                    return LevelDownPath(path);
+                    return ProcessingPathOnRemoveLastName(path);
                 else if(command == "./")
                     return path;
             }
             else
-                path = ProcessingDirectory(path, command);
+                path = ProcessingDirectoryOnAccuracy(path, command);
 
             return path;
         }
-
-        private string LevelDownPath(string path)//Стираем путь до первого разделения
+        /// <summary>
+        /// Проверка перед стиранием пути до первого разделения.
+        /// </summary>
+        private string ProcessingPathOnRemoveLastName(string path)
         {
             if(path.Length <= 3)
                 return path;
 
-            return RemoveLastName(path);
+            return RemoveLastNamePath(path);
         }
-
-        private string RemoveLastName(string path)
+        /// <summary>
+        /// Стирание пути до первого разделения.
+        /// </summary>
+        private string RemoveLastNamePath(string path)
         {
            path = path.Split('\\')
                     .Select(x => x.Trim())
@@ -75,14 +86,14 @@ namespace TaskDNS.Tools
                     .ToString();
 
             if (path.Length < 3)
-                return root;
+                return Root;
             else
                 return path;
         }
 
-        private string ProcessingDirectory(string path, string command)// Проверка на количество длинны команды(потенциального пути)
+        private string ProcessingDirectoryOnAccuracy(string path, string command)
         {
-            bool isExistence = CheckAccuracyDirectory(ref path, ref command);// Проверяем на существование
+            bool isExistence = CheckAccuracyDirectory(ref path, ref command);
 
             if (isExistence)
                return OpenDirectory(path, command);//Открывает папку
@@ -94,17 +105,19 @@ namespace TaskDNS.Tools
         {
             string localCommnd = command.Remove(3);
 
-            if (localCommnd == root)// Проверка первых символов на полный путь (C:\)
+            if (localCommnd == Root)
                 return FullPaht(path, command);
             else 
                 return ShortPath(path, command);
         }
 
-        private string FullPaht(string path, string command)
+        private static string FullPaht(string path, string command)
         {
             if(path != command)
-                if(command.Length > path.Length)// Если путь комманды превышает длину текущего пути то помещаем конец команды в следующий путь
+            {
+                if(command.Length > path.Length)
                     return command;
+            }
 
             return path;
         }
@@ -114,37 +127,39 @@ namespace TaskDNS.Tools
             if(command.Length > 3)
             {
                 command = ClearAllPoint(command);
-
                 if (command[0] == '/' || command[0] == '\\')
                     command = command.Remove(0, 1);
             }
 
             if (path.Length == 3)
-                return root + command;
+                return Root + command;
             else
                 return path + "\\" + command;
         }
-
+        /// <summary>
+        /// Метод для обработки и проверки команды на существование директории.
+        /// </summary>
         private bool CheckAccuracyDirectory(ref string path,ref string command)
         {
             ///Обработка
             command = ProcessingOnAccuracyCommand(command);
-
             bool isProccesingResult = ProcessingOnAccuracyPath(command);
 
             if (isProccesingResult)
                 return ProcessingDirectory(command,ref path);
             else
             {
-                path = root;
+                path = Root;
                 return false;
             }
         }
-
+       /// <summary>
+       /// Проверка на существование директории.
+       /// </summary>
        private bool ProcessingDirectory(string command,ref string path)
        {
             string localCommand = command.Remove(3);
-            if (localCommand == root)//Проверка на полный путь включаня название диска
+            if (localCommand == Root)//Проверка на полный путь включаня название диска
             {
                 try
                 {
@@ -165,12 +180,14 @@ namespace TaskDNS.Tools
                 }
                 catch
                 {
-                    path = root;
+                    path = Root;
                     return false;
                 }
             }
        }
-
+        /// <summary>
+        /// Удаление все пробелы из пути.
+        /// </summary>
        private string ClearSpaceInPath(string path)
        {
             return path.Split('\\')
@@ -178,19 +195,24 @@ namespace TaskDNS.Tools
                 .Aggregate((first, end) => $"{first}\\{end}")
                 .ToString();
        }
-
+        /// <summary>
+        /// Удаление всех точек.
+        /// </summary>
         private string ClearAllPoint(string localCommand)
         {
             if(localCommand.Remove(3).IndexOf('\\') != -1)
                 localCommand = localCommand.Replace(".", string.Empty);
+
             return localCommand;
         }
-
+        /// <summary>
+        /// Обработка команды перед проверка на существование директории.
+        /// </summary>
         private string ProcessingOnAccuracyCommand(string command)
         {
             string localCommand = command.Remove(3);
 
-            if (localCommand == root)
+            if (localCommand == Root)
                 command = command.Trim('.');
             else
                 command = ClearAllPoint(command);
@@ -200,15 +222,19 @@ namespace TaskDNS.Tools
 
             return command;
         }
-
-        private bool ProcessingOnAccuracyPath( string command)
+        /// <summary>
+        /// Проверка длинны команды.
+        /// </summary>
+        private static bool ProcessingOnAccuracyPath(string command)
         {
             if (command.Length == 1)
                 return false;
             else
                 return true;
         }
-
+        /// <summary>
+        /// Удаление лишних символов.
+        /// </summary>
         private string ClearCharacters(string command)
         {
             if (string.IsNullOrEmpty(command))
@@ -223,22 +249,6 @@ namespace TaskDNS.Tools
 
             if (string.IsNullOrEmpty(command))
                 return "CD";
-
-            return command;
-        }
-
-
-        private string checkIsNameDirectory(string command)
-        {
-            bool word = false;
-            for(int i = 0; i <command.Length; i++)
-            {
-               if(command[i] != '.' || command[i] != '*'|| command[i] != '/')
-               {
-                    word = true;
-                    command.Remove(0, i);
-               }
-            }
 
             return command;
         }

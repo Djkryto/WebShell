@@ -22,6 +22,11 @@ namespace TaskDNS.Controllers
         IRepositoryCommand dbCommand;
         CMD cmd;
 
+        /// <summary>
+        /// Получение команды от клиента.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("Add")]
         public async Task<JsonResult> AddCommand([FromBody]Command command)
@@ -33,29 +38,39 @@ namespace TaskDNS.Controllers
             //////////////////////////////
             return Json(null);
         }
-
+        /// <summary>
+        /// Внешний метод закрытия консоли(cmd.exe).
+        /// </summary>
         [HttpGet]
-        [Route("Close_CMD")]
-        public async Task CloseCMD()
+        [Route("Stop")]
+        public void Stop()
         {
-            await cmd.CloseProcess();
+            cmd.Stop();
         }
-
+        /// <summary>
+        /// Внешний метод отправки текущей директории клиениту.
+        /// </summary>
         [HttpGet]
-        [Route("Get_Path")]
+        [Route("Get_Directory")]
         public string GetPath()
         {
-            return cmd.GetPath();
+            return cmd.GetDirectory();
         }
+        /// <summary>
+        /// Внешний метод отправки всех директорий клиенту относительно текущей директории.
+        /// </summary>
         [HttpGet]
-        [Route("Get_ArrayChildPath")]
-        public JsonResult GetArrayChildPath()
+        [Route("Get_Directories")]
+        public JsonResult GetDirectories()
         {
-            return Json(cmd.GetChildPath());
+            return Json(cmd.GetDirectories());
         }
+        /// <summary>
+        /// Метод для отправки истории комманд клиенту.
+        /// </summary>
         [HttpGet]
-        [Route("History")]
-        public JsonResult History()
+        [Route("Get_History")]
+        public JsonResult GetHistory()
         {
             Command[] history = new Command[2]; 
             history = dbCommand.AllHistory().ToArray();
