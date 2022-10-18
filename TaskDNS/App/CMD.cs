@@ -50,7 +50,7 @@ namespace TaskDNS.App
 
         public async Task CloseProcess()
         {
-            
+            //
         }
 
         private async Task SendOutputClient()
