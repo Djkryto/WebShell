@@ -11,12 +11,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("TaskDNS.Tests")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("TaskDNS.WorkDirectoryTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
-[assembly: System.Reflection.AssemblyProductAttribute("TaskDNS.Tests")]
-[assembly: System.Reflection.AssemblyTitleAttribute("TaskDNS.Tests")]
+[assembly: System.Reflection.AssemblyProductAttribute("TaskDNS.WorkDirectoryTests")]
+[assembly: System.Reflection.AssemblyTitleAttribute("TaskDNS.WorkDirectoryTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 
 // Создано классом WriteCodeFragment MSBuild.

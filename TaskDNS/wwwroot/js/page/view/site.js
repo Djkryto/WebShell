@@ -1,277 +1,277 @@
 ﻿
-let historyCommand = document.getElementById("listOutputCommand");
-let inputCommand = document.getElementById("inputCommand");
-let allElement = document.getElementById("Console");
+const historyCommand = document.getElementById("listOutputCommand")
+const inputCommand = document.getElementById("inputCommand")
 
-let setCountPress = false;
-let countPress = 0;
-let countChild = 0;
+let onPressInputCommand = false
+let countPress = 0
+let countCurrentDirectories = 0
 
-let hubConnection;
-let dataHistory;
-
-let dirictoriesArray;
-let mainDirectory = "C:\\";
-let command = '';
-let currentDirictoryPath;
+let mainDirectory = "C:\\"
+let DirectoryesArray
+let command = ''
 
 /**
-   * JavaScript функция - имеет аннотацию с указанием типа
+   * JavaScript функция - отправка данных на сервер
     * @param {number} dataTime текущее время.
     * @param {number} inputFieldText текс из InputField.
     */
-const AddCommandAsync = async (dataTime, inputFieldText) => {
-    //Отправка данных на сервер
-    let urlAdd = "https://localhost:7032/Server/Add";
-    let commandJS = { id: 0, data: dataTime, textCommand: inputFieldText.replace('\"', '') };
+const addCommandAsync = async (dataTime, inputFieldText) => {
 
-    let li = document.createElement('li');
+    urlAddOnServer = "https://localhost:7032/Server/add"
+    dataClient = { id: 0, data: dataTime, textCommand: inputFieldText.replace('\"', '') }
+
+    li = document.createElement('li')
     li.append(inputFieldText + "\n")
 
-    historyCommand.appendChild(li); 
+    historyCommand.appendChild(li) 
 
-    if (inputFieldText != '') {
-        await fetch(urlAdd, {
+    if (inputFieldText !== '') {
+        await fetch(urlAddOnServer, {
             method: "POST",
             redirect: "follow",
-            body: JSON.stringify(commandJS),
+            body: JSON.stringify(dataClient),
             headers: { 'Content-Type': 'application/json' }
         })
     }
 }
+
 /**
-   * JavaScript функция - без аннотации.
+   * JavaScript функция - получающая путь у сервера.
    */
 const getDirectoryAsync = async () => {
-    //Получиьть путь у сервера.
-    let url = "https://localhost:7032/Server/Get_Directory";
-    let responce = await fetch(url);
-    let data = await responce.text();
 
-    mainDirectory = data;
-    DownScroll();
-    inputCommand.value = mainDirectory + "\>";
+    urlGetDirectory = "https://localhost:7032/Server/getDirectory"
+    responce = await fetch(urlGetDirectory)
+    directory = await responce.text()
+
+    mainDirectory = directory
+    downScroll()
+    inputCommand.value = mainDirectory + "\>"
 }
+
 /**
-   * JavaScript функция - без аннотации.
+   * JavaScript функция - обеспечивающая получения списка директорий относительна текущей(главной) директории.
    */
 const getDirectoriesAsync = async () => {
-    //Получить список директорий относительна текущей(главной) директории.
-    let url = "https://localhost:7032/Server/Get_Directories";
-    let responce = await fetch(url);
-    let data = await responce.json();
 
-    DirictoryesPathArray = Object.keys(data).map(key => [data[key]])
+     urlGetDirectories = "https://localhost:7032/Server/getDirectories"
+     responce = await fetch(urlGetDirectories)
+     directories = await responce.json()
+
+     DirectoryesArray = Object.keys(directories).map(key => [directories[key]])
 }
 
 /**
-   * JavaScript функция - без аннотации.
+   * JavaScript функция - обеспечивающая получение истории из базы данных.
    */
 const getHistoryAsync = async () => {
-    //Получени истории из базы данных.
-    let urlHistory = "https://localhost:7032/Server/Get_History"
-    let response = await fetch(urlHistory);
-    let data = await response.json()
 
-    dataHistory = data;
+    urlGetHistory = "https://localhost:7032/Server/getHistory"
+    response = await fetch(urlGetHistory)
+    dataHistory = await response.json()
 
-    for (let i in data) {
-        let li = document.createElement("li");
-        li.append( data[i].textCommand + "\n")
+    for (let i in dataHistory) {
+        let li = document.createElement("li")
+        li.append(dataHistory[i].textCommand + "\n")
 
-        historyCommand.appendChild(li);
-        DownScroll();
+        historyCommand.appendChild(li)
+        downScroll()
     }
 
-    getDirectoryAsync();
-    getDirectoriesAsync();
+    await getDirectoryAsync()
+    await getDirectoriesAsync()
 }
 
 /**
-   * JavaScript функция - без аннотации.
+   * JavaScript функция - обеспечивающая подключение к WebSoket.
    */
 const connectToHub = async () => {
-    //Подключение к WebSoket.
     const hub = new signalR.HubConnectionBuilder() 
         .withUrl("/chat")
-        .build();
-    hubConnection = hub;
+        .build()
+    hubConnection = hub
     hub.on("Send", function (data) {
-        getDirectoriesAsync();
-        WriteHistoryCommand(data.status, data.output);
-        getDirectoryAsync();
-        DownScroll();
+        getDirectoriesAsync()
+        writeHistoryCommand(data.status, data.output)
+        getDirectoryAsync()
+        downScroll()
 
-        if (data.status == 0)
-            OffInput();
+        if (data.status === 0)
+            offInput()
         else
-            OnInput();
-    });
+            onInput()
+    })
 
     inputCommand.value = mainDirectory + "\>"
     hub.start()
 }
 
 /**
-   * JavaScript функция - имеет аннотацию с указанием типа.
+   * JavaScript функция - посылающая на сервер запрос на отмену команды.
    */
-const cancelCommandAsync = async () => {
-    //Послать на сервер запрос на отмену команды.
-    let url = "https://localhost:7032/Server/Stop"
-    hubConnection = null;
-    await fetch(url);
+const stopCommandAsync = async () => {
+
+    urlStopCommand = "https://localhost:7032/Server/Stop"
+
+    await fetch(urlStopCommand, {
+        method: "POST",
+        redirect: "follow",
+        body: JSON.stringify(),
+        headers: { 'Content-Type': 'application/json' }
+    })
 }
 
-////StartCommandOnLoadPage////
-
-getHistoryAsync(historyCommand)
-connectToHub();
-inputCommand.onkeydown = () => { return checkKey(event.key) };
-inputCommand.focus();
+/**
+   * JavaScript функция - запускающая необходимые команды после загрузки.
+   */
+window.onload = () => {
+    getHistoryAsync(historyCommand)
+    connectToHub()
+    inputCommand.onkeydown = () => { return checkKey(event.key) }
+    inputCommand.focus()
+}
 
 /**
-   * JavaScript функция - имеет аннотацию с указанием типа.
+   * JavaScript функция - обрабатывающая код нажатой клавиши для выполнения комманд.
     * @param {string} key является кодом нажатой кнопки.
    */
 function checkKey(key) {
     
-    if (setCountPress == false) {
-        countPress = dataHistory.length;
-        setCountPress = true;
+    if (onPressInputCommand === false) {
+        countPress = dataHistory.length
+        onPressInputCommand = true
     }
 
-    if (key == "Backspace" || key == "ArrowLeft" || key == "A") {
-        let lenghtInputCommand = inputCommand.value.length - 1;
+    if (key === "Backspace" || key === "ArrowLeft" || key === "A") {
+         lenghtInputCommand = inputCommand.value.length - 1
         if (inputCommand.value[lenghtInputCommand] == ">")
-            return false;
-        
+            return false
     }
 
-    if (key == "ArrowUp") {
-        countPress--;
+    if (key === "ArrowUp") {
+        countPress--
         if (countPress < 0)
             countPress = 0
 
-        inputCommand.value = mainDirectory + "\> " + dataHistory[countPress].textCommand;
+        inputCommand.value = mainDirectory + "\> " + dataHistory[countPress].textCommand
     }
-    else if (key == "ArrowDown") {
-        countPress++;
+    else if (key === "ArrowDown") {
+        countPress++
         if (countPress > dataHistory.length - 1)
             countPress = dataHistory.length - 1
 
-        inputCommand.value = mainDirectory + "\> " + dataHistory[countPress].textCommand;
+        inputCommand.value = mainDirectory + "\> " + dataHistory[countPress].textCommand
     }
-    if (key == "Enter") {
+    if (key === "Enter") {
 
-        historyCommand.value += inputCommand.value + "\n" + "\n";
+        historyCommand.value += inputCommand.value + "\n" + "\n"
         getCommand(inputCommand.value)
-        AddCommandAsync("Data", command)
-        inputCommand.value = mainDirectory + "\> ";
+        addCommandAsync("Data", command)
+        inputCommand.value = mainDirectory + "\> "
 
-        command = '';
+        command = ''
     }
 
-    if (key == "Control") { //Остановка команды
-        cancelCommandAsync();
+    if (key === "Control") { //Остановка команды
+        stopCommandAsync()
     }
 
-    if (key == "Tab") {
-        if (DirictoryesPathArray != null) {
-            DirictoryesPath = currentPath(mainDirectory, DirictoryesPathArray[countChild]);
+    if (key === "Tab") {
+        if (DirectoryesArray != null) {
+            childDirictory = currentDirectory(mainDirectory, DirectoryesArray[countCurrentDirectories])
 
-            inputCommand.value = mainDirectory + "\>" + DirictoryesPath;
-            inputCommand.focus();
+            inputCommand.value = mainDirectory + "\>" + childDirictory
+            inputCommand.focus()
         }
     }
     
-    if (inputCommand.value == '')
+    if (inputCommand.value === '')
         inputCommand.value = mainDirectory + "\>"
     
     return key
 }
 /**
-   * JavaScript функция - имеет аннотацию с указанием типа
+   * JavaScript функция - прокручивающая страницу в самый низ
    */
-function DownScroll() {
-    inputCommand.scrollIntoView(false);
+function downScroll() {
+    inputCommand.scrollIntoView(false)
 }
 /**
    * JavaScript функция - имеет аннотацию с указанием типа
    */
-function OffInput() {
-    inputCommand.onkeypress = () => { return false };
+function offInput() {
+    inputCommand.onkeypress = () => { return false }
 }
 /**
    * JavaScript функция - имеет аннотацию с указанием типа
    */
-function OnInput() {
-    inputCommand.onkeypress = () => { return true };
+function onInput() {
+    inputCommand.onkeypress = () => { return true }
 }
 /**
-   * JavaScript функция - имеет аннотацию с указанием типа
+   * JavaScript функция - запись комманд в historyCommand
     * @param {number} status состояние выполненной команды на сервере.
      * @param {string} dataText данные пришедшие от сервера.
    */
-function WriteHistoryCommand(status, dataText) {
+function writeHistoryCommand(status, dataText) {
 
     if (status != 2) {
 
-        let li = document.createElement("li");
-        let pre = document.createElement("pre");
+        li = document.createElement("li")
+        pre = document.createElement("pre")
 
-        pre.append(dataText);
-        li.append(pre);
+        pre.append(dataText)
+        li.append(pre)
 
         if (status == 1)
-            li.classList.add("red");
+            li.classList.add("red")
         else
-            li.classList.add("white");
+            li.classList.add("white")
         
-
-        historyCommand.appendChild(li);
-        DownScroll();
+        historyCommand.appendChild(li)
+        downScroll()
     }
 }
 
 /**
-   * JavaScript функция - имеет аннотацию с указанием типа
+   * JavaScript функция - обработка веденной команды от клиента перед отправкой на сервер.
    */
 function getCommand(inputCommandText) {
   
-    let isStartReadCommand;
-    let isReadComman;
-    let i = 0;
+    let isStartReadCommand
+    let isReadCommand
 
-    while (i != inputCommandText.length) {
-        if (inputCommandText[i] == ">") {
-            isStartReadCommand = true;
-            i++;
+    for (let i = 0; i != inputCommandText.length;i++) {
+        if (inputCommandText[i] === ">") {
+            isStartReadCommand = true
+            i++
         }
         if (isStartReadCommand) {
             if (inputCommandText[i] != " ")
-                isReadComman = true;
-            if (isReadComman)
-                command += inputCommandText[i];
+                isReadCommand = true
+            if (isReadCommand)
+                command += inputCommandText[i]
         }
-        i++;
     }
 }
+/**
+   * JavaScript функция - сравнивающая имя главной директории(текущей) с под директорией выбранной клиентом.
+   * Так же обраезает совпадающие имена выбранной директории с главной(корневой).
+   */
+function currentDirectory(mainDirectory,Directories) {
+     readyDirectory = '';
 
-function currentPath(pathMain,pathArrayChild) {
-    let lineReturn = '';
-
-    let array = pathArrayChild[0];
-    for (let i = 0; i < array.length; i++) {
-        if (array[i] != pathMain[i])
-            lineReturn += array[i];
-        
+    let array = Directories[0]
+    for (let i = 0; i < array.length ; i++) {
+        if (array[i] != mainDirectory[i])
+            readyDirectory += array[i]
     }
 
-    if (countChild == DirictoryesPathArray.length - 1)
-        countChild = 0;
+    if (countCurrentDirectories === DirectoryesArray.length - 1) 
+        countCurrentDirectories = 0
     else
-        countChild++;
+        countCurrentDirectories++
 
-    lineReturn = lineReturn.slice(0);
-    return lineReturn;
+    readyDirectory = readyDirectory.slice(0)
+    return readyDirectory
 }

@@ -1,16 +1,21 @@
 ﻿namespace TaskDNS.Models
 {
+    /// <summary>
+    /// Класс являющийся моделью для работы с базой данных
+    /// </summary>
     public class Command
     {
-        public Command(int id, string data, string textCommand)
-        {
-            Id = id;
-            Data = data;
-            TextCommand = textCommand;
-        }
-
+        /// <summary>
+        /// Порядковый номер в базе данных.
+        /// </summary>
         public int Id { get; set; }
+        /// <summary>
+        /// Время.
+        /// </summary>
         public string Data { get; set; }
+        /// <summary>
+        /// Текст введенной команды от клиента.
+        /// </summary>
         public string TextCommand { get; set; }
     }
 }
