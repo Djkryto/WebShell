@@ -4,15 +4,15 @@ using TaskDNS.Models;
 
 namespace TaskDNS.Controllers
 {
+    /// <summary>
+    /// Класс обрабатывающий отображения страниц сайта.
+    /// </summary>
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
+        /// <summary>
+        /// Главная страница.
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Index()
         {
             return View();

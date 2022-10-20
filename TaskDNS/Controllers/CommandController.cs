@@ -5,62 +5,64 @@ using TaskDNS.Models;
 using TaskDNS.Models.SQLServer;
 using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
-using TaskDNS.App;
 using TaskDNS.Channels.Interface;
+using TaskDNS.App.Processes;
 
 namespace TaskDNS.Controllers
 {
+    /// <summary>
+    /// Класс отвечающий за выполнение комманд.
+    /// </summary>
     [Route("Server")]
     public class CommandController : Controller
     {
+        private ICommandRepository dbCommand;
+        private CMD cmd;
+
+        /// <summary>
+        /// Значения в конструкторе необходимы для запуска процесса(cmd.exe) и обращение в БД. 
+        /// </summary>
+        /// <param name="context">Обращение в базу данных.</param>
+        /// <param name="cmd">Класс процесса cmd.exe</param>
         public CommandController(CommandContext context,CMD cmd)
         {
-            dbCommand = new SQLCommand(context);
+            dbCommand = new CommandRepostiory(context);
             this.cmd = cmd;
         }
-
-        IRepositoryCommand dbCommand;
-        CMD cmd;
 
         /// <summary>
         /// Получение команды от клиента.
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="commandFromClient">Комманда пришедшая от клиента</param>
         /// <returns></returns>
-        [HttpPost]
-        [Route("Add")]
-        public async Task<JsonResult> AddCommand([FromBody]Command command)
+        [HttpPost("add")]
+        public void AddCommand([FromBody]Command commandFromClient)
         {
-            cmd.Write(command.TextCommand);
+            cmd.Write(commandFromClient.TextCommand);
             //////////////////////////////
-            dbCommand.Add(command);
+            dbCommand.Add(commandFromClient);
             dbCommand.Save();
-            //////////////////////////////
-            return Json(null);
         }
         /// <summary>
         /// Внешний метод закрытия консоли(cmd.exe).
         /// </summary>
-        [HttpGet]
-        [Route("Stop")]
-        public void Stop()
+        [HttpPost("stop")]
+        public async Task StopAsync()
         {
-            cmd.Stop();
+           await cmd.StopAsync();
         }
         /// <summary>
         /// Внешний метод отправки текущей директории клиениту.
         /// </summary>
-        [HttpGet]
-        [Route("Get_Directory")]
-        public string GetPath()
+        [HttpGet("getDirectory")]
+        public string GetDirectory()
         {
             return cmd.GetDirectory();
         }
         /// <summary>
         /// Внешний метод отправки всех директорий клиенту относительно текущей директории.
         /// </summary>
-        [HttpGet]
-        [Route("Get_Directories")]
+        [HttpGet("getDirectories")]
         public JsonResult GetDirectories()
         {
             return Json(cmd.GetDirectories());
@@ -68,11 +70,10 @@ namespace TaskDNS.Controllers
         /// <summary>
         /// Метод для отправки истории комманд клиенту.
         /// </summary>
-        [HttpGet]
-        [Route("Get_History")]
+        [HttpGet("getHistory")]
         public JsonResult GetHistory()
         {
-            Command[] history = new Command[2]; 
+            var history = new Command[2]; 
             history = dbCommand.AllHistory().ToArray();
             return Json(history);
         }

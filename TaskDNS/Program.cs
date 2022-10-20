@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TaskDNS.App;
+using TaskDNS.App.Processes;
 using TaskDNS.Channels.Interface;
 using TaskDNS.Channels.Models;
 using TaskDNS.Controllers;
@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSignalR();
-builder.Services.AddHostedService<Worker>();
+builder.Services.AddHostedService<WorkScope>();
 builder.Services.AddSingleton<CMD>();
 
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
