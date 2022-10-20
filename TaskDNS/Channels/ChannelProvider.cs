@@ -4,10 +4,13 @@ using TaskDNS.Channels.Interface;
 namespace TaskDNS.Channels
 {
     /// <summary>
-    /// Канал данных.
+    /// Класс предоставляющий канал данных.
     /// </summary>
     public static class ChannelProvider
     {
+        /// <summary>
+        /// Канал данных.
+        /// </summary>
         public static Channel<ICMDCommand> CommandChannel = Channel.CreateUnbounded<ICMDCommand>();
     }
 }
