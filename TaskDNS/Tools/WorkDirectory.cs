@@ -6,114 +6,111 @@
     public class WorkDirectory
     {
         private const string Root = @"C:\";
-        private const int CommandCharacterAmountCD = 3;
-
+        private const int CharacterAmoutCDAndSpace = 3;
+        private const int CharacterAmoutCD = 2;
         /// <summary>
         /// Обработка команды с возвращаемым значением в виде нового пути.
         /// </summary>
-        /// <param name="currentDirectory">Текущая директория.</param>
-        /// <param name="command">Комманда.</param>
+        /// <param name="currentDirectory">Текущая директория работы процесса.</param>
+        /// <param name="commandClient">Комманда от клиента.</param>
         /// <returns></returns>
-        public string GetDirectory(string currentDirectory, string command)
+        public string GetDirectory(string currentDirectory, string commandClient)
         {
-            var isCD = IsCommandCD(command);
-            if (!isCD)
+            var isCd = IsCommandCd(commandClient);
+            if (!isCd)
                 return currentDirectory;
 
-            var localCommand = FirstStageClearingExtraCharacters(command);
+            var directory = FirstStageClearingExtraCharacters(commandClient);
 
-            localCommand = ClearAllSpaceDirectory(localCommand);
+            directory = ClearAllSpaceDirectory(directory);
 
-            return ReadyDirectory(currentDirectory, localCommand); 
-            //int.TryParse(localCommand, out var result);
+            return ReadyDirectory(currentDirectory, directory); 
         }
 
-        private bool IsCommandCD(string command)
+        private static bool IsCommandCd(string commandClient)
         {
-            command = ClearAllSpaceDirectory(command);
-            var directory = command.Remove(2);
+            commandClient = ClearAllSpaceDirectory(commandClient);
+            var directory = commandClient.Remove(CharacterAmoutCD);
 
             return string.Equals(directory, "CD", StringComparison.OrdinalIgnoreCase);
         }
 
-        private string ReadyDirectory(string path, string command)
+        private static string ReadyDirectory(string currentDirectory, string directory)
         {
-            switch (command.Length)
+            switch (directory.Length)
             {
                 case 1:
                     return Root;
                 case 2:
-                    return command == ".." ? RemoveLastNameDirectory(path) : path;
+                    return directory == ".." ? RemoveLastNameDirectory(currentDirectory) : currentDirectory;
                 default:
-                    path = ProcessDirectory(path, command);
-
-                    return path;
+                    return ProcessDirectory(currentDirectory, directory);
             }
         }
 
-        private string RemoveLastNameDirectory(string path)
+        private static string RemoveLastNameDirectory(string currentDirectory)
         {
-            if (path.Length <= CommandCharacterAmountCD)
-                return path;
+            if (currentDirectory.Length <= CharacterAmoutCDAndSpace)
+                return currentDirectory;
 
-            path = path.Split('\\')
+            currentDirectory = currentDirectory.Split('\\')
                     .Select(x => x.Trim())
                     .SkipLast(1)
                     .Aggregate((first, end) => $"{first}\\{end}")
                     .ToString();
 
-            return path.Length < 3 ? Root : path;
+            return currentDirectory.Length < 3 ? Root : currentDirectory;
         }
 
-        private string ProcessDirectory(string path, string command)
+        private static string ProcessDirectory(string currentDirectory, string directory)
         {
-            var isExistence = CheckExistenceDirectory(path,command, out command);
+            var isExistence = CheckExistenceDirectory(currentDirectory,directory, out directory);
 
-            return isExistence ? OpenDirectory(path, command) : Root;
+            return isExistence ? OpenDirectory(currentDirectory, directory) : Root;
         }
 
-        private string OpenDirectory(string path, string command)
+        private static string OpenDirectory(string currentDirectory, string directory)
         {
-            var directory = command.Remove(CommandCharacterAmountCD);
+            var readyDirectory = directory.Remove(CharacterAmoutCDAndSpace);
 
-            return directory == Root ? OpenWithDisk(path, command) : OpenNotDisk(path, command);
+            return readyDirectory == Root ? OpenWithDisk(currentDirectory, directory) : OpenNotDisk(currentDirectory, directory);
         }
 
-        private static string OpenWithDisk(string path, string command)
+        private static string OpenWithDisk(string currentDirectory, string directory)
         {
-            return command.Length > path.Length ? command : path;
+            return directory.Length > currentDirectory.Length ? directory : currentDirectory;
         }
 
-        private string OpenNotDisk(string path,  string command)
+        private static string OpenNotDisk(string currentDirectory,  string directory)
         {
-            if(command.Length > 3)
+            if(directory.Length > 3)
             {
-                command = ClearAllPoint(command);
-                if (command[0] == '/' || command[0] == '\\')
-                    command = command.Remove(0, 1);
+                directory = ClearAllPoint(directory);
+                if (directory[0] == '/' || directory[0] == '\\')
+                    directory = directory.Remove(0, 1);
             }
 
-            if (path.Length == 3)
-                return Root + command;
+            if (currentDirectory.Length == 3)
+                return Root + directory;
           
-            return path + "\\" + command;
+            return currentDirectory + "\\" + directory;
         }
 
-        private bool CheckExistenceDirectory(string path,string command,out string result)
+        private static bool CheckExistenceDirectory(string currentDirectory,string directory,out string result)
         {
-             TwoStageClearingExtraCharacter(command,out result);
+             TwoStageClearingExtraCharacter(directory,out result);
 
-            return result.Length > 1 && CheckExistsDirectory(result, path);
+            return result.Length > 1 && CheckExistsDirectory(result, currentDirectory);
         }
 
-       private bool CheckExistsDirectory(string command, string path)
+       private static bool CheckExistsDirectory(string directory, string currentDirectory)
        {
-            var directory = command.Remove(CommandCharacterAmountCD);
+            var readyDirectory = directory.Remove(CharacterAmoutCDAndSpace);
            
-            return directory == Root ? Directory.Exists(command) : Directory.Exists(path + "\\" + command);
+            return readyDirectory == Root ? Directory.Exists(directory) : Directory.Exists(currentDirectory + "\\" + directory);
        }
 
-       private string ClearAllSpaceDirectory(string directory)
+       private static string ClearAllSpaceDirectory(string directory)
        {
             return directory.Split('\\')
                 .Select(x => x.Trim())
@@ -121,39 +118,37 @@
                 .ToString();
        }
 
-        private string ClearAllPoint(string localCommand)
+        private static string ClearAllPoint(string directory)
         {
-            if(localCommand.Remove(CommandCharacterAmountCD).IndexOf('\\') != -1)
-                localCommand = localCommand.Replace(".", string.Empty);
+            if(directory.Remove(CharacterAmoutCDAndSpace).IndexOf('\\') != -1)
+                directory = directory.Replace(".", string.Empty);
 
-            return localCommand;
+            return directory;
         }
 
-        private string TwoStageClearingExtraCharacter(string command, out string result)
+        private static void TwoStageClearingExtraCharacter(string directory, out string result)
         {
-            var localCommand = command.Remove(CommandCharacterAmountCD);
-
-            result = localCommand == Root ? command.Trim('.') : ClearAllPoint(command);
+            var readyDirectory = directory.Remove(CharacterAmoutCDAndSpace);
+            
+            result = readyDirectory == Root ? directory.Trim('.') : ClearAllPoint(directory);
 
             if (result[0] == '/' || result[0] == '\\')
                 result = result.Remove(0, 1);
-
-            return result;
         }
 
-        private string FirstStageClearingExtraCharacters(string command)
+        private static string FirstStageClearingExtraCharacters(string directory)
         {
-            if (string.IsNullOrEmpty(command))
+            if (string.IsNullOrEmpty(directory))
                 return "CD";
 
-            command = command.Trim()
-                .Remove(0,2)
+            directory = directory.Trim()
+                .Remove(0, CharacterAmoutCD)
                 .Trim()
                 .Replace('/', '\\')
                 .Replace('"', ' ')
                 .Trim();
             
-            return string.IsNullOrEmpty(command) ? "CD" : command;
+            return string.IsNullOrEmpty(directory) ? "CD" : directory;
         }
     }
 }

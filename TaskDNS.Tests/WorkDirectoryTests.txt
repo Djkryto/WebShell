@@ -67,7 +67,7 @@ namespace TaskDNS.Tests
         }
 
         [TestCaseSource(nameof(ProcessingParapetrsPathCommandCD))]
-        public void GetPropertiProcessingPathCommandCD(string path,string command,string expectedOutput)
+        public void WorkDirectory_GetDirectory_TreeString_Ok(string path,string command,string expectedOutput)
         {
             var result = process.GetDirectory(path, command);
 

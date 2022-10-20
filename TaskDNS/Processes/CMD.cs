@@ -24,7 +24,7 @@ namespace TaskDNS.App.Processes
 
         private static string _directory = @"C:\";
 
-        private static WorkDirectory _workDirectory = new WorkDirectory();
+        private static readonly WorkDirectory _workDirectory = new ();
         private static Process _process;
 
         /// <summary>
@@ -69,10 +69,10 @@ namespace TaskDNS.App.Processes
             Thread.Sleep(10);
             SetConsoleCtrlHandler(null, false);
 
-            await WriteInChannelAsync(new Complete());
+            await WriteInChannelAsync(new Complete(),null);
         }
 
-        private string[] Directories()
+        private static string[] Directories()
         {
             var mainDirectory = new DirectoryInfo(_directory);
             var directories = mainDirectory.GetDirectories();
@@ -80,7 +80,7 @@ namespace TaskDNS.App.Processes
             return directoriesArray;
         }
 
-        private void Start()
+        private static void Start()
         {
             _process = new Process();
 
@@ -95,13 +95,13 @@ namespace TaskDNS.App.Processes
             _process.OutputDataReceived += new DataReceivedEventHandler(async (sender, e) =>
             {
                 var command = new Executive(e.Data);
-                await WriteInChannelAsync(command);
+                await WriteInChannelAsync(command, command.Output);
             });
 
             _process.ErrorDataReceived += new DataReceivedEventHandler(async (sender, e) =>
             {
                 var command = new Error(e.Data);
-                await WriteInChannelAsync(command);
+                await WriteInChannelAsync(command, command.Output);
             });
 
             _process.Start();
@@ -109,8 +109,11 @@ namespace TaskDNS.App.Processes
             _process.BeginErrorReadLine();
         }
 
-        private async Task WriteInChannelAsync(ICMDCommand command)
+        private static async Task WriteInChannelAsync(ICMDCommand command,string textCommand)
         {
+            if(string.IsNullOrEmpty(textCommand))
+                await ChannelProvider.CommandChannel.Writer.WriteAsync(new Complete());
+            
             await ChannelProvider.CommandChannel.Writer.WriteAsync(command);
         }
     }

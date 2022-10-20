@@ -1,15 +1,15 @@
-﻿
-const historyCommand = document.getElementById("listOutputCommand")
-const inputCommand = document.getElementById("inputCommand")
+﻿const fieldHistoryCommand = document.getElementById("listOutputCommand")
+const fieldInputCommand = document.getElementById("inputCommand")
 
 let onPressInputCommand = false
-let countPress = 0
+let countCurrentCommandHistory = 0
 let countCurrentDirectories = 0
 
-let mainDirectory = "C:\\"
-let DirectoryesArray
-let command = ''
+let mainDirectory = 'C:\\'
+let DirectoriesArray = []
 
+statusServerCommand = 2
+command = ''
 /**
    * JavaScript функция - отправка данных на сервер
     * @param {number} dataTime текущее время.
@@ -21,9 +21,9 @@ const addCommandAsync = async (dataTime, inputFieldText) => {
     dataClient = { id: 0, data: dataTime, textCommand: inputFieldText.replace('\"', '') }
 
     li = document.createElement('li')
-    li.append(inputFieldText + "\n")
+    li.append(inputFieldText + '\n')
 
-    historyCommand.appendChild(li) 
+    fieldHistoryCommand.appendChild(li) 
 
     if (inputFieldText !== '') {
         await fetch(urlAddOnServer, {
@@ -46,7 +46,7 @@ const getDirectoryAsync = async () => {
 
     mainDirectory = directory
     downScroll()
-    inputCommand.value = mainDirectory + "\>"
+    fieldInputCommand.value = mainDirectory + '\>'
 }
 
 /**
@@ -58,7 +58,7 @@ const getDirectoriesAsync = async () => {
      responce = await fetch(urlGetDirectories)
      directories = await responce.json()
 
-     DirectoryesArray = Object.keys(directories).map(key => [directories[key]])
+     DirectoriesArray = directories
 }
 
 /**
@@ -71,10 +71,10 @@ const getHistoryAsync = async () => {
     dataHistory = await response.json()
 
     for (let i in dataHistory) {
-        let li = document.createElement("li")
-        li.append(dataHistory[i].textCommand + "\n")
+        let li = document.createElement('li')
+        li.append(dataHistory[i].textCommand + '\n')
 
-        historyCommand.appendChild(li)
+        fieldHistoryCommand.appendChild(li)
         downScroll()
     }
 
@@ -85,24 +85,20 @@ const getHistoryAsync = async () => {
 /**
    * JavaScript функция - обеспечивающая подключение к WebSoket.
    */
-const connectToHub = async () => {
+const connectToHubAsync = async () => {
     const hub = new signalR.HubConnectionBuilder() 
         .withUrl("/chat")
         .build()
     hubConnection = hub
-    hub.on("Send", function (data) {
+    hub.on("Send", function (dataHub) {
+        statusServerCommand = dataHub.status
         getDirectoriesAsync()
-        writeHistoryCommand(data.status, data.output)
+        writeHistoryCommand(dataHub.status, dataHub.output)
         getDirectoryAsync()
         downScroll()
-
-        if (data.status === 0)
-            offInput()
-        else
-            onInput()
     })
 
-    inputCommand.value = mainDirectory + "\>"
+    fieldInputCommand.value = mainDirectory + '\>'
     hub.start()
 }
 
@@ -124,69 +120,77 @@ const stopCommandAsync = async () => {
 /**
    * JavaScript функция - запускающая необходимые команды после загрузки.
    */
-window.onload = () => {
-    getHistoryAsync(historyCommand)
-    connectToHub()
-    inputCommand.onkeydown = () => { return checkKey(event.key) }
-    inputCommand.focus()
+window.onload = async () => {
+    await getHistoryAsync(fieldHistoryCommand)
+    await connectToHubAsync()
+    fieldInputCommand.onkeydown = async () => {
+        if (statusServerCommand === 0) {
+            if (event.key === 'Control') {
+                await stopCommandAsync();
+            }
+            else {
+                return false
+            }
+        }
+        else
+            checkKey(event.key)
+    }
+    fieldInputCommand.focus()
 }
 
 /**
    * JavaScript функция - обрабатывающая код нажатой клавиши для выполнения комманд.
-    * @param {string} key является кодом нажатой кнопки.
+   * @param {string} key является кодом нажатой кнопки.
    */
 function checkKey(key) {
     
     if (onPressInputCommand === false) {
-        countPress = dataHistory.length
+        countCurrentCommandHistory = dataHistory.length
         onPressInputCommand = true
     }
 
-    if (key === "Backspace" || key === "ArrowLeft" || key === "A") {
-         lenghtInputCommand = inputCommand.value.length - 1
-        if (inputCommand.value[lenghtInputCommand] == ">")
-            return false
+    if (key === 'Backspace' || key === 'ArrowLeft' || key === 'A') {
+         lenghtInputCommand = fieldInputCommand.value.length - 1
+        if (fieldInputCommand.value[lenghtInputCommand] === '>') {
+            return key;
+        }
     }
 
-    if (key === "ArrowUp") {
-        countPress--
-        if (countPress < 0)
-            countPress = 0
+    if (key === 'ArrowUp') {
+        countCurrentCommandHistory--
+        if (countCurrentCommandHistory < 0)
+            countCurrentCommandHistory = 0
 
-        inputCommand.value = mainDirectory + "\> " + dataHistory[countPress].textCommand
+        fieldInputCommand.value = mainDirectory + '\> ' + dataHistory[countCurrentCommandHistory].textCommand
     }
-    else if (key === "ArrowDown") {
-        countPress++
-        if (countPress > dataHistory.length - 1)
-            countPress = dataHistory.length - 1
+    else if (key === 'ArrowDown') {
+        countCurrentCommandHistory++
+        if (countCurrentCommandHistory > dataHistory.length - 1)
+            countCurrentCommandHistory = dataHistory.length - 1
 
-        inputCommand.value = mainDirectory + "\> " + dataHistory[countPress].textCommand
+        fieldInputCommand.value = mainDirectory + '\> ' + dataHistory[countCurrentCommandHistory].textCommand
     }
-    if (key === "Enter") {
+    if (key === 'Enter') {
 
-        historyCommand.value += inputCommand.value + "\n" + "\n"
-        getCommand(inputCommand.value)
-        addCommandAsync("Data", command)
-        inputCommand.value = mainDirectory + "\> "
+        fieldHistoryCommand.value += fieldInputCommand.value + '\n' + '\n'
+        getCommand(fieldInputCommand.value)
+        addCommandAsync('Data', command)
+        fieldInputCommand.value = mainDirectory + '\> '
 
         command = ''
     }
 
-    if (key === "Control") { //Остановка команды
-        stopCommandAsync()
-    }
+    if (key === 'Tab') {
+        if (DirectoriesArray != null) {
+            childDirictory = currentDirectory(mainDirectory, DirectoriesArray[countCurrentDirectories])
 
-    if (key === "Tab") {
-        if (DirectoryesArray != null) {
-            childDirictory = currentDirectory(mainDirectory, DirectoryesArray[countCurrentDirectories])
-
-            inputCommand.value = mainDirectory + "\>" + childDirictory
-            inputCommand.focus()
+            fieldInputCommand.value = mainDirectory + '\>' + childDirictory
+            fieldInputCommand.focus()
         }
     }
-    
-    if (inputCommand.value === '')
-        inputCommand.value = mainDirectory + "\>"
+
+    if (fieldInputCommand.value === '')
+        fieldInputCommand.value = mainDirectory + '\>'
     
     return key
 }
@@ -194,20 +198,9 @@ function checkKey(key) {
    * JavaScript функция - прокручивающая страницу в самый низ
    */
 function downScroll() {
-    inputCommand.scrollIntoView(false)
+    fieldInputCommand.scrollIntoView(false)
 }
-/**
-   * JavaScript функция - имеет аннотацию с указанием типа
-   */
-function offInput() {
-    inputCommand.onkeypress = () => { return false }
-}
-/**
-   * JavaScript функция - имеет аннотацию с указанием типа
-   */
-function onInput() {
-    inputCommand.onkeypress = () => { return true }
-}
+
 /**
    * JavaScript функция - запись комманд в historyCommand
     * @param {number} status состояние выполненной команды на сервере.
@@ -217,18 +210,18 @@ function writeHistoryCommand(status, dataText) {
 
     if (status != 2) {
 
-        li = document.createElement("li")
-        pre = document.createElement("pre")
+        li = document.createElement('li')
+        pre = document.createElement('pre')
 
         pre.append(dataText)
         li.append(pre)
 
         if (status == 1)
-            li.classList.add("red")
+            li.classList.add('red')
         else
-            li.classList.add("white")
+            li.classList.add('white')
         
-        historyCommand.appendChild(li)
+        fieldHistoryCommand.appendChild(li)
         downScroll()
     }
 }
@@ -242,12 +235,12 @@ function getCommand(inputCommandText) {
     let isReadCommand
 
     for (let i = 0; i != inputCommandText.length;i++) {
-        if (inputCommandText[i] === ">") {
+        if (inputCommandText[i] === '>') {
             isStartReadCommand = true
             i++
         }
         if (isStartReadCommand) {
-            if (inputCommandText[i] != " ")
+            if (inputCommandText[i] != ' ')
                 isReadCommand = true
             if (isReadCommand)
                 command += inputCommandText[i]
@@ -259,15 +252,14 @@ function getCommand(inputCommandText) {
    * Так же обраезает совпадающие имена выбранной директории с главной(корневой).
    */
 function currentDirectory(mainDirectory,Directories) {
-     readyDirectory = '';
+    readyDirectory = ''
 
-    let array = Directories[0]
-    for (let i = 0; i < array.length ; i++) {
-        if (array[i] != mainDirectory[i])
-            readyDirectory += array[i]
+    for (let i = 0; i < Directories.length ; i++) {
+        if (Directories[i] != mainDirectory[i])
+            readyDirectory += Directories[i]
     }
 
-    if (countCurrentDirectories === DirectoryesArray.length - 1) 
+    if (countCurrentDirectories === DirectoriesArray.length - 1) 
         countCurrentDirectories = 0
     else
         countCurrentDirectories++
