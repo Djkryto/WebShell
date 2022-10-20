@@ -7,6 +7,8 @@ using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 using TaskDNS.App;
 using TaskDNS.Channels.Interface;
+using TaskDNS.App.Processes;
+using TaskDNS.Models.Dto;
 
 namespace TaskDNS.Controllers
 {
@@ -31,9 +33,8 @@ namespace TaskDNS.Controllers
         [Route("Add")]
         public async Task<JsonResult> AddCommand([FromBody]Command command)
         {
-            cmd.Write(command.TextCommand);
-            //////////////////////////////
-            dbCommand.Add(command);
+            cmd.Write(commandFromClient.TextCommand);
+            dbCommand.Add(commandFromClient);
             dbCommand.Save();
             //////////////////////////////
             return Json(null);
@@ -72,9 +73,9 @@ namespace TaskDNS.Controllers
         [Route("Get_History")]
         public JsonResult GetHistory()
         {
-            Command[] history = new Command[2]; 
-            history = dbCommand.AllHistory().ToArray();
-            return Json(history);
+            var history = dbCommand.AllHistory().ToArray();
+            var historyDto = history.Select(x => new CommandDto(x));
+            return Json(historyDto);
         }
     }
 }

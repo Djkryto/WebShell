@@ -2,15 +2,18 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using TaskDNS.Channels;
 using TaskDNS.Channels.Interface;
 using TaskDNS.Channels.Models;
 using TaskDNS.Tools;
 
-
-namespace TaskDNS.App
+namespace TaskDNS.App.Processes
 {
+    /// <summary>
+    /// Класс открывающий процесс cmd.exe
+    /// </summary>
     public class CMD
     {
         private delegate bool ConsoleCtrlDelegate(uint type);
@@ -21,17 +24,23 @@ namespace TaskDNS.App
 
         private static string _directory = @"C:\";
 
+        private static readonly ProcessCommand _processCommand = new ();
         private static Process _process;
-        private static ProcessingCommand _processing = new ProcessingCommand();
 
+        /// <summary>
+        /// Запуск процесса cmd.exe.
+        /// </summary>
         public CMD()
         {
             Start();
         }
 
+        /// <summary>
+        /// Запись в командную строку.
+        /// </summary>
         public void Write(string command)
         {
-            _directory = _processing.Processing(_directory,command);
+            _directory = _processCommand.GetDirectory(_directory, command);
             _process.StandardInput.WriteLine(command);
         }
         /// <summary>
@@ -41,43 +50,37 @@ namespace TaskDNS.App
         {
             return _directory;
         }
+
         /// <summary>
         ///  Отправляем клиенту список катологов текущей директории.
         /// </summary>
         public string[] GetDirectories()
         {
-            return childDirecty();
+            return Directories();
         }
+
         /// <summary>
         ///  Остановка выполняемой команды.
         /// </summary>
-        public void Stop()
+        public async Task StopAsync()
         {
             SetConsoleCtrlHandler(null, true);
             GenerateConsoleCtrlEvent(0, _process.Id);
             Thread.Sleep(10);
             SetConsoleCtrlHandler(null, false);
 
-            SendOutputClient();
+            await WriteInChannelAsync(new Complete(),null);
         }
 
-        private async Task SendOutputClient()
+        private static string[] Directories()
         {
-            var complete = new Complete();
-            await ChannelProvider.CommandChannel.Writer.WriteAsync(complete);
-        }
-        /// <summary>
-        ///  Получаем список катологов из текущей директории.
-        /// </summary>
-        private string[] childDirecty()
-        {
-            DirectoryInfo mainDirectory = new DirectoryInfo(_directory);
-            DirectoryInfo[] childDirectory = mainDirectory.GetDirectories();
-            string[] chilldArray = childDirectory.Select(x => x.FullName).ToArray();
-            return chilldArray;
+            var mainDirectory = new DirectoryInfo(_directory);
+            var directories = mainDirectory.GetDirectories();
+            var directoriesArray = directories.Select(x => x.FullName).ToArray();
+            return directoriesArray;
         }
 
-        private void Start() 
+        private static void Start()
         {
             _process = new Process();
 
@@ -88,36 +91,30 @@ namespace TaskDNS.App
             _process.StartInfo.RedirectStandardInput = true;
             _process.StartInfo.RedirectStandardOutput = true;
             _process.StartInfo.WorkingDirectory = _directory;
-            ///////////////////////////////////////////////////
-            ///
-            ///////////////////////////////////////////////
-            _process.ErrorDataReceived += new DataReceivedEventHandler(async (sender, e) =>
-            {
-                if (!String.IsNullOrEmpty(e.Data))
-                {
-                    var command = new Error(e.Data);
-                    await ChannelProvider.CommandChannel.Writer.WriteAsync(command);
-                }
-                else await SendOutputClient();
-            });
 
             _process.OutputDataReceived += new DataReceivedEventHandler(async (sender, e) =>
             {
-                if (!String.IsNullOrEmpty(e.Data))
-                {
-                    var command = new Executive(e.Data);
-                    await ChannelProvider.CommandChannel.Writer.WriteAsync(command);
-                }
-                else await SendOutputClient();
+                var command = new Executive(e.Data);
+                await WriteInChannelAsync(command, command.Output);
             });
-            //////////////////////////////////////
-            ///
-            ////////////////////////////////////
+
+            _process.ErrorDataReceived += new DataReceivedEventHandler(async (sender, e) =>
+            {
+                var command = new Error(e.Data);
+                await WriteInChannelAsync(command, command.Output);
+            });
+
             _process.Start();
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
+        }
 
-            SendOutputClient();
+        private static async Task WriteInChannelAsync(ICMDCommand command,string textCommand)
+        {
+            if(string.IsNullOrEmpty(textCommand))
+                await ChannelProvider.CommandChannel.Writer.WriteAsync(new Complete());
+            
+            await ChannelProvider.CommandChannel.Writer.WriteAsync(command);
         }
     }
 }

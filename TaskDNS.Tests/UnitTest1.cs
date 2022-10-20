@@ -1,16 +1,14 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using TaskDNS.App;
-using TaskDNS.Channels;
-using TaskDNS.Controllers;
+using NUnit.Framework;
+using System.Text;
+using System.Text.Unicode;
 using TaskDNS.Tools;
 
 namespace TaskDNS.Tests
 {
    
-    public class Tests
+    public class WorkDirectoryTests
     {
-        static object[] ProcessingParapetrsPathCommandCD =
+        static object[] Parametrs_WorkDirectory_GetDirectory_TreeString_Ok =
         {
             new object[] {@"C:\","CD Program Files",@"C:\Program Files"},
             new object[] {@"C:\",@"CD Program Files\Git", @"C:\Program Files\Git" },
@@ -32,10 +30,10 @@ namespace TaskDNS.Tests
             new object[] { "C:\\Program Files\\Git", @" CD ../../ ", "C:\\" },
             new object[] { "C:\\", @" CD ../../ ", "C:\\" },
 
-            new object[] { "C:\\", @" CD C:\..GoyPavel\Новая папка\Новая папка\Новая папка", "C:\\..GoyPavel\\Новая папка\\Новая папка\\Новая папка" },
-            new object[] { "C:\\", @" CD C:\..GoyPavel\Новая папка\Новая папка\Новая папка ", "C:\\..GoyPavel\\Новая папка\\Новая папка\\Новая папка" },
-            new object[] { "C:\\", @" CD  C:\..GoyPavel\Новая папка\Новая папка\Новая папка", "C:\\..GoyPavel\\Новая папка\\Новая папка\\Новая папка" },
-             new object[] { "C:\\", @" CD ..GoyPavel\Новая папка\Новая папка\Новая папка", "C:\\..GoyPavel\\Новая папка\\Новая папка\\Новая папка" },
+            new object[] { "C:\\", @" CD C:\..GoyPavel\РќРѕРІР°СЏ РїР°РїРєР°\РќРѕРІР°СЏ РїР°РїРєР°\РќРѕРІР°СЏ РїР°РїРєР°", "C:\\..GoyPavel\\РќРѕРІР°СЏ РїР°РїРєР°\\РќРѕРІР°СЏ РїР°РїРєР°\\РќРѕРІР°СЏ РїР°РїРєР°" },
+            new object[] { "C:\\", @" CD C:\..GoyPavel\РќРѕРІР°СЏ РїР°РїРєР°\РќРѕРІР°СЏ РїР°РїРєР°\РќРѕРІР°СЏ РїР°РїРєР° ", "C:\\..GoyPavel\\РќРѕРІР°СЏ РїР°РїРєР°\\РќРѕРІР°СЏ РїР°РїРєР°\\РќРѕРІР°СЏ РїР°РїРєР°" },
+            new object[] { "C:\\", @" CD  C:\..GoyPavel\РќРѕРІР°СЏ РїР°РїРєР°\РќРѕРІР°СЏ РїР°РїРєР°\РќРѕРІР°СЏ РїР°РїРєР°", "C:\\..GoyPavel\\РќРѕРІР°СЏ РїР°РїРєР°\\РќРѕРІР°СЏ РїР°РїРєР°\\РќРѕРІР°СЏ РїР°РїРєР°" },
+            new object[] { "C:\\", @" CD ..GoyPavel\РќРѕРІР°СЏ РїР°РїРєР°\РќРѕРІР°СЏ РїР°РїРєР°\РќРѕРІР°СЏ РїР°РїРєР°", "C:\\..GoyPavel\\РќРѕРІР°СЏ РїР°РїРєР°\\РќРѕРІР°СЏ РїР°РїРєР°\\РќРѕРІР°СЏ РїР°РїРєР°" },
 
             new object[] {@"C:\","CD ..",@"C:\"},
             new object[] {@"C:\Program Files","CD ..",@"C:\"},
@@ -57,18 +55,18 @@ namespace TaskDNS.Tests
             new object[] { "C:\\", @" CD ", "C:\\" },
         };
 
-        private ProcessingCommand process;
+        private ProcessCommand process;
 
         [SetUp]
         public void Setup()
         {
-            process = new ProcessingCommand();
+            process = new ProcessCommand();
         }
 
-        [TestCaseSource(nameof(ProcessingParapetrsPathCommandCD))]
-        public void GetPropertiProcessingPathCommandCD(string path,string command,string expectedOutput)
+        [TestCaseSource(nameof(Parametrs_WorkDirectory_GetDirectory_TreeString_Ok))]
+        public void WorkDirectory_GetDirectory_TreeString_Ok(string path,string command,string expectedOutput)
         {
-            string result = process.Processing(path, command);
+            var result = process.GetDirectory(path, command);
 
             Assert.AreEqual(expectedOutput, result);
         }
