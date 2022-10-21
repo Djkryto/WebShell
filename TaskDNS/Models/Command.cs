@@ -11,26 +11,16 @@ namespace TaskDNS.Models
         /// Порядковый номер в базе данных.
         /// </summary>
         [Key]
-        public int Id { get; set; }
+        public int Id { get; init; }
 
         /// <summary>
         /// Время.
         /// </summary>
-        public string Data { get; set; }
+        public string Data { get; init; }
 
         /// <summary>
         /// Текст введенной команды от клиента.
         /// </summary>
-        public string TextCommand { get; set; }
-
-        /// <summary>
-        /// .ctor
-        /// </summary>
-        public Command(int id, string data, string textCommand)
-        {
-            Id = id;
-            Data = data;
-            TextCommand = textCommand;
-        }
+        public string TextCommand { get; init; }
     }
 }
