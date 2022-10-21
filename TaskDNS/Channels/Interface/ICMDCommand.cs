@@ -1,7 +1,7 @@
 ﻿namespace TaskDNS.Channels.Interface
 {
     /// <summary>
-    /// Контрак на получение статуса о команде.
+    /// Интерфейс для получение статуса о команде.
     /// </summary>
     public interface ICMDCommand
     { 

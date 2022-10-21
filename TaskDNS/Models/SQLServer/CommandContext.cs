@@ -11,12 +11,12 @@ namespace TaskDNS.Models.SQLServer
     public class CommandContext : DbContext
     {
         /// <summary>
-        /// Таблица с командами.
+        /// Сущность для работы с базой данных.
         /// </summary>
         public DbSet<Command> Commands { get; set; }
 
         /// <summary>
-        /// Образение к базе данных.
+        /// .ctor
         /// </summary>
         public CommandContext(DbContextOptions<CommandContext> options)
             : base(options)

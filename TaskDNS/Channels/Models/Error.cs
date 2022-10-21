@@ -2,9 +2,10 @@
 using TaskDNS.Controllers.Interface;
 
 namespace TaskDNS.Channels.Models
-{ /// <summary>
-  /// Класс со статусом выполненой команды с ошибкой.
-  /// </summary>
+{    
+     /// <summary>
+     /// Класс со статусом выполненой команды с ошибкой.
+     /// </summary>
     public class Error : ICMDCommand
     {   
          /// <summary>
@@ -18,9 +19,8 @@ namespace TaskDNS.Channels.Models
         public string Output { get; }
 
         /// <summary>
-        /// Конструкто определяющий значения свойств Output и Status.
+        /// .ctor
         /// </summary>
-        /// <param name="output">Ответ с сервера.</param>
         public Error(string output)
         {
             Status = Status.Error;

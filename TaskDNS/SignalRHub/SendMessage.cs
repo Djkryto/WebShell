@@ -9,10 +9,9 @@ namespace TaskDNS.SignalRHub
     public class SendMessage : BackgroundService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        /// <summary>
-        /// Создание рабочего пространства.
+       /// <summary>
+        /// .ctor
         /// </summary>
-        /// <param name="serviceScopeFactory">Сервис рабочего пространства.</param>
         public SendMessage(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;

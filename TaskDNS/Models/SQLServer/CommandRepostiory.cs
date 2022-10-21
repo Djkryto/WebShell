@@ -4,31 +4,35 @@ using TaskDNS.Models.Dto;
 
 namespace TaskDNS.Models.SQLServer
 {
-    ///<inheritdoc cref="ICommandRepository"/>
+    ///<inheritdoc />
     public class CommandRepostiory : ICommandRepository
     {
         private CommandContext db;
-        ///<inheritdoc cref="ICommandRepository"/>
+        ///<inheritdoc />
         public CommandRepostiory(CommandContext db)
         {
             this.db = db;
         }
-        ///<inheritdoc cref="ICommandRepository.Add" />
+
+        ///<inheritdoc />
         public void Add(Command command)
         {
            db.Add(command);
         }
-        ///<inheritdoc cref="ICommandRepository.Save" />
+
+        ///<inheritdoc  />
         public void Save()
         {
             db.SaveChanges();
         }
-        ///<inheritdoc cref="ICommandRepository.Remove" />
+
+        ///<inheritdoc />
         public void Remove(Command command)
         {
             db.Remove(command);
         }
-        ///<inheritdoc cref="ICommandRepository.AllHistory" />
+
+        ///<inheritdoc />
         public IEnumerable<Command> AllHistory()
         {
            return db.Commands;

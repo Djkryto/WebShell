@@ -5,14 +5,13 @@ using TaskDNS.Models;
 namespace TaskDNS.Controllers
 {
     /// <summary>
-    /// Класс обрабатывающий отображения страниц сайта.
+    /// Класс отображающий страницы.
     /// </summary>
     public class HomeController : Controller
     {
         /// <summary>
         /// Главная страница.
         /// </summary>
-        /// <returns></returns>
         public IActionResult Index()
         {
             return View();

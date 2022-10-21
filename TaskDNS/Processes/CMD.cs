@@ -12,7 +12,7 @@ using TaskDNS.Tools;
 namespace TaskDNS.App.Processes
 {
     /// <summary>
-    /// Класс открывающий процесс cmd.exe asdasdasdasdas
+    /// Класс открывающий процесс cmd.exe.
     /// </summary>
     public class CMD
     {
@@ -28,7 +28,7 @@ namespace TaskDNS.App.Processes
         private static Process _process;
 
         /// <summary>
-        /// Запуск процесса cmd.exe.
+        /// .ctor
         /// </summary>
         public CMD()
         {
@@ -44,7 +44,7 @@ namespace TaskDNS.App.Processes
             _process.StandardInput.WriteLine(command);
         }
         /// <summary>
-        ///  Отправка клиенту текущую директорию.
+        /// Отправка клиенту данные о текущую директорию.
         /// </summary>
         public string GetDirectory()
         {
@@ -52,7 +52,7 @@ namespace TaskDNS.App.Processes
         }
 
         /// <summary>
-        ///  Отправляем клиенту список катологов текущей директории.
+        ///  Отправляем клиенту список подкатологов текущей директории.
         /// </summary>
         public string[] GetDirectories()
         {
@@ -60,7 +60,7 @@ namespace TaskDNS.App.Processes
         }
 
         /// <summary>
-        ///  Остановка выполняемой команды.
+        /// Остановка выполняемой команды.
         /// </summary>
         public async Task StopAsync()
         {

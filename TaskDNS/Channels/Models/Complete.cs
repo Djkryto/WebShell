@@ -14,7 +14,7 @@ namespace TaskDNS.Channels.Models
         public Status Status { get; }
 
         /// <summary>
-        /// Конструток опредлеяет совойство Status.
+        /// .ctor
         /// </summary>
         public Complete()
         {

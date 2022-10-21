@@ -12,26 +12,32 @@ using TaskDNS.Models.Dto;
 
 namespace TaskDNS.Controllers
 {
+    /// <summary>
+    /// Класс отвечающий за взаимодействие с базой данных и процессом cmd.exe.
+    /// </summary>
     [Route("Server")]
     public class CommandController : Controller
     {
+        private ICommandRepository dbCommand;
+        private CMD cmd;
+
+        /// <summary>
+        /// .ctor
+        /// </summary>
+        /// <param name="context">Взаимодействие с базой данных</param>
+        /// <param name="cmd">Взаимодействие клиента с процессом cmd.exe</param>
         public CommandController(CommandContext context,CMD cmd)
         {
-            dbCommand = new SQLCommand(context);
+            dbCommand = new CommandRepostiory(context);
             this.cmd = cmd;
         }
-
-        IRepositoryCommand dbCommand;
-        CMD cmd;
 
         /// <summary>
         /// Получение команды от клиента.
         /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("Add")]
-        public async Task<JsonResult> AddCommand([FromBody]Command command)
+        /// <param name="commandFromClient"></param>
+        [HttpPost("add")]
+        public async Task<JsonResult> AddCommand([FromBody]Command commandFromClient)
         {
             cmd.Write(commandFromClient.TextCommand);
             dbCommand.Add(commandFromClient);
@@ -39,38 +45,38 @@ namespace TaskDNS.Controllers
             //////////////////////////////
             return Json(null);
         }
+
         /// <summary>
         /// Внешний метод закрытия консоли(cmd.exe).
         /// </summary>
-        [HttpGet]
-        [Route("Stop")]
-        public void Stop()
+        [HttpGet("stop")]
+        public async Task Stop()
         {
-            cmd.Stop();
+           await cmd.StopAsync();
         }
+
         /// <summary>
         /// Внешний метод отправки текущей директории клиениту.
         /// </summary>
-        [HttpGet]
-        [Route("Get_Directory")]
-        public string GetPath()
+        [HttpGet("getDirectory")]
+        public string GetDirectory()
         {
             return cmd.GetDirectory();
         }
+
         /// <summary>
         /// Внешний метод отправки всех директорий клиенту относительно текущей директории.
         /// </summary>
-        [HttpGet]
-        [Route("Get_Directories")]
+        [HttpGet("getDirectories")]
         public JsonResult GetDirectories()
         {
             return Json(cmd.GetDirectories());
         }
+
         /// <summary>
         /// Метод для отправки истории комманд клиенту.
         /// </summary>
-        [HttpGet]
-        [Route("Get_History")]
+        [HttpGet("getHistory")]
         public JsonResult GetHistory()
         {
             var history = dbCommand.AllHistory().ToArray();
