@@ -8,14 +8,14 @@
         /// <summary>
         /// Текст комманды.
         /// </summary>
-        public  string textCommand { get;}
+        public string TextCommand { get;}
 
         /// <summary>
         /// .ctor
         /// </summary>
         public CommandDto(Command command)
         {
-            textCommand = command.TextCommand;
+            TextCommand = command.TextCommand;
         }
     }
 }

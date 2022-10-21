@@ -6,13 +6,13 @@ namespace TaskDNS.SignalRHub
     /// <summary>
     /// Класс по отправке сообщений клиентам.
     /// </summary>
-    public class SendMessage : BackgroundService
+    public class SignalRClientNotifier : BackgroundService
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
-       /// <summary>
+        /// <summary>
         /// .ctor
         /// </summary>
-        public SendMessage(IServiceScopeFactory serviceScopeFactory)
+        public SignalRClientNotifier(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;
         }

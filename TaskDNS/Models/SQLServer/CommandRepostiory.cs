@@ -7,35 +7,35 @@ namespace TaskDNS.Models.SQLServer
     ///<inheritdoc />
     public class CommandRepostiory : ICommandRepository
     {
-        private CommandContext db;
+        private CommandContext Db { get; }
         ///<inheritdoc />
         public CommandRepostiory(CommandContext db)
         {
-            this.db = db;
+            this.Db = db;
         }
 
         ///<inheritdoc />
         public void Add(Command command)
         {
-           db.Add(command);
+           Db.Add(command);
         }
 
         ///<inheritdoc  />
         public void Save()
         {
-            db.SaveChanges();
+            Db.SaveChanges();
         }
 
         ///<inheritdoc />
         public void Remove(Command command)
         {
-            db.Remove(command);
+            Db.Remove(command);
         }
 
         ///<inheritdoc />
         public IEnumerable<Command> AllHistory()
         {
-           return db.Commands;
+           return Db.Commands;
         }
     }
 }

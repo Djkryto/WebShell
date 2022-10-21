@@ -18,8 +18,8 @@ namespace TaskDNS.Controllers
     [Route("Server")]
     public class CommandController : Controller
     {
-        private ICommandRepository dbCommand;
-        private CMD cmd;
+        private ICommandRepository BdCommand { get; }
+        private CMD Cmd { get; }
 
         /// <summary>
         /// .ctor
@@ -28,8 +28,8 @@ namespace TaskDNS.Controllers
         /// <param name="cmd">Взаимодействие клиента с процессом cmd.exe</param>
         public CommandController(CommandContext context,CMD cmd)
         {
-            dbCommand = new CommandRepostiory(context);
-            this.cmd = cmd;
+            BdCommand = new CommandRepostiory(context);
+            this.Cmd = cmd;
         }
 
         /// <summary>
@@ -39,9 +39,9 @@ namespace TaskDNS.Controllers
         [HttpPost("add")]
         public async Task<JsonResult> AddCommand([FromBody]Command commandFromClient)
         {
-            cmd.Write(commandFromClient.TextCommand);
-            dbCommand.Add(commandFromClient);
-            dbCommand.Save();
+            Cmd.Write(commandFromClient.TextCommand);
+            BdCommand.Add(commandFromClient);
+            BdCommand.Save();
             //////////////////////////////
             return Json(null);
         }
@@ -52,7 +52,7 @@ namespace TaskDNS.Controllers
         [HttpGet("stop")]
         public async Task Stop()
         {
-           await cmd.StopAsync();
+           await Cmd.StopAsync();
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace TaskDNS.Controllers
         [HttpGet("getDirectory")]
         public string GetDirectory()
         {
-            return cmd.GetDirectory();
+            return Cmd.GetDirectory();
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace TaskDNS.Controllers
         [HttpGet("getDirectories")]
         public JsonResult GetDirectories()
         {
-            return Json(cmd.GetDirectories());
+            return Json(Cmd.GetDirectories());
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace TaskDNS.Controllers
         [HttpGet("getHistory")]
         public JsonResult GetHistory()
         {
-            var history = dbCommand.AllHistory().ToArray();
+            var history = BdCommand.AllHistory().ToArray();
             var historyDto = history.Select(x => new CommandDto(x));
             return Json(historyDto);
         }
