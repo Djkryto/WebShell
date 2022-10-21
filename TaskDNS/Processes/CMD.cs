@@ -12,7 +12,7 @@ using TaskDNS.Tools;
 namespace TaskDNS.App.Processes
 {
     /// <summary>
-    /// Класс открывающий процесс cmd.exe
+    /// Класс открывающий процесс cmd.exe asdasdasdasdas
     /// </summary>
     public class CMD
     {
