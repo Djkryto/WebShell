@@ -5,7 +5,7 @@ namespace TaskDNS.Channels.Models
     /// <summary>
     /// Класс со статусом ошибка при выполнении команды.
     /// </summary>
-    public class Executive : ICMDCommand
+    public class Executive : ICommandWithStatus
     {
         /// <summary>
         /// Статус в данном классе имеет значение Executive. 

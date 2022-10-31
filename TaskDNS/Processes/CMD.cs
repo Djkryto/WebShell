@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Numerics;
 using System.Runtime.InteropServices;
 using TaskDNS.Channels;
 using TaskDNS.Channels.Interface;
@@ -109,12 +107,12 @@ namespace TaskDNS.App.Processes
             _process.BeginErrorReadLine();
         }
 
-        private static async Task WriteInChannelAsync(ICMDCommand command,string textCommand)
+        private static async Task WriteInChannelAsync(ICommandWithStatus commandWithStatus,string textCommand)
         {
             if(string.IsNullOrEmpty(textCommand))
                 await ChannelProvider.CommandChannel.Writer.WriteAsync(new Complete());
             
-            await ChannelProvider.CommandChannel.Writer.WriteAsync(command);
+            await ChannelProvider.CommandChannel.Writer.WriteAsync(commandWithStatus);
         }
     }
 }

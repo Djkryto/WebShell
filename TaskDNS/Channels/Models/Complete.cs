@@ -6,7 +6,7 @@ namespace TaskDNS.Channels.Models
     /// <summary>
     /// Класс со статусом выполненой команды с правильным завершением.
     /// </summary>
-    public class Complete : ICMDCommand
+    public class Complete : ICommandWithStatus
     {
         /// <summary>
         /// В данном классе имеет значение Complete.

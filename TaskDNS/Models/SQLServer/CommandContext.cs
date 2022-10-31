@@ -1,7 +1,4 @@
-﻿using Microsoft;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using TaskDNS.Models.Dto;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace TaskDNS.Models.SQLServer
 {

@@ -1,12 +1,11 @@
 ﻿using TaskDNS.Channels.Interface;
-using TaskDNS.Controllers.Interface;
 
 namespace TaskDNS.Channels.Models
 {    
      /// <summary>
      /// Класс со статусом выполненой команды с ошибкой.
      /// </summary>
-    public class Error : ICMDCommand
+    public class Error : ICommandWithStatus
     {   
          /// <summary>
          /// Статус в данном классе имеет значение Error. 

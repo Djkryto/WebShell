@@ -11,6 +11,6 @@ namespace TaskDNS.Channels
         /// <summary>
         /// Канал данных.
         /// </summary>
-        public static Channel<ICMDCommand> CommandChannel = Channel.CreateUnbounded<ICMDCommand>();
+        public static Channel<ICommandWithStatus> CommandChannel = Channel.CreateUnbounded<ICommandWithStatus>();
     }
 }

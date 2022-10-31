@@ -1,41 +1,33 @@
 ﻿using TaskDNS.Controllers.Interface;
-using Microsoft.EntityFrameworkCore;
-using TaskDNS.Models.Dto;
 
 namespace TaskDNS.Models.SQLServer
 {
     ///<inheritdoc />
     public class CommandRepostiory : ICommandRepository
     {
-        private CommandContext Db { get; }
+        private readonly CommandContext _db;
         ///<inheritdoc />
         public CommandRepostiory(CommandContext db)
         {
-            this.Db = db;
+            this._db = db;
         }
 
         ///<inheritdoc />
         public void Add(Command command)
         {
-           Db.Add(command);
+           _db.Add(command);
         }
 
         ///<inheritdoc  />
         public void Save()
         {
-            Db.SaveChanges();
+            _db.SaveChanges();
         }
-
+        
         ///<inheritdoc />
-        public void Remove(Command command)
+        public IEnumerable<Command> GetHistory()
         {
-            Db.Remove(command);
-        }
-
-        ///<inheritdoc />
-        public IEnumerable<Command> AllHistory()
-        {
-           return Db.Commands;
+           return _db.Commands;
         }
     }
 }

@@ -8,7 +8,7 @@
         /// <summary>
         /// Текст комманды.
         /// </summary>
-        public string TextCommand { get;}
+        public string TextCommand { get; }
 
         /// <summary>
         /// .ctor

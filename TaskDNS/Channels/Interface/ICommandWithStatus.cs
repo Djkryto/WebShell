@@ -3,7 +3,7 @@
     /// <summary>
     /// Интерфейс для получение статуса о команде.
     /// </summary>
-    public interface ICMDCommand
+    public interface ICommandWithStatus
     { 
         /// <summary>
         /// Статус о текущей команде.

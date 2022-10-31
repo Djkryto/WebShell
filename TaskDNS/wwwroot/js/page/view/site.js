@@ -19,7 +19,7 @@ let command = ''
     */
 const addCommandAsync = async (dataTime, fieldInputValue) => {
 
-    const urlAddOnServer = "https://localhost:7032/Server/add"
+    const urlAddOnServer = "https://localhost:7032/command/add"
     const dataClient = { id: 0, data: dataTime, textCommand: fieldInputValue.replace('\"', '') }
 
     const li = document.createElement('li')
@@ -41,7 +41,7 @@ const addCommandAsync = async (dataTime, fieldInputValue) => {
    */
 const getDirectoryAsync = async () => {
 
-    const urlGetDirectory = "https://localhost:7032/Server/getDirectory"
+    const urlGetDirectory = "https://localhost:7032/command/getDirectory"
     const responce = await fetch(urlGetDirectory)
     const directory = await responce.text()
 
@@ -54,7 +54,7 @@ const getDirectoryAsync = async () => {
    */
 const getDirectoriesAsync = async () => {
 
-     const urlGetDirectories = "https://localhost:7032/Server/getDirectories"
+    const urlGetDirectories = "https://localhost:7032/command/getDirectories"
      const responce = await fetch(urlGetDirectories)
      const directories = await responce.json()
 
@@ -65,7 +65,7 @@ const getDirectoriesAsync = async () => {
    */
 const getHistoryAsync = async () => {
 
-    const urlGetHistory = "https://localhost:7032/Server/getHistory"
+    const urlGetHistory = "https://localhost:7032/command/getHistory"
     const response = await fetch(urlGetHistory)
     const dataHistory = await response.json()
 
@@ -106,7 +106,7 @@ const connectToHubAsync = async () => {
    */
 const stopCommandAsync = async () => {
 
-    const urlStopCommand = "https://localhost:7032/Server/Stop"
+    const urlStopCommand = "https://localhost:7032/command/Stop"
 
     await fetch(urlStopCommand, {
         method: "POST",
