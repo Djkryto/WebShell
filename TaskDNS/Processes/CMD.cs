@@ -41,6 +41,7 @@ namespace TaskDNS.App.Processes
             _directory = _processCommand.GetDirectory(_directory, command);
             _process.StandardInput.WriteLine(command);
         }
+
         /// <summary>
         /// Отправка клиенту данные о текущую директорию.
         /// </summary>

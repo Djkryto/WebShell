@@ -1,15 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskDNS.Controllers.Interface;
 using TaskDNS.Models;
 using TaskDNS.Models.SQLServer;
 using TaskDNS.App.Processes;
 using TaskDNS.Models.Dto;
+using TaskDNS.Models.SQLServer.Repository;
 
 namespace TaskDNS.Controllers
 {
     /// <summary>
     /// Класс отвечающий за взаимодействие с базой данных и процессом cmd.exe.
     /// </summary>
+    [Authorize]
     [Route("command")]
     public class CommandController : Controller
     {
@@ -21,9 +24,9 @@ namespace TaskDNS.Controllers
         /// </summary>
         /// <param name="context">Взаимодействие с базой данных</param>
         /// <param name="cmd">Взаимодействие клиента с процессом cmd.exe</param>
-        public CommandController(CommandContext context,CMD cmd)
+        public CommandController(SQLContext context,CMD cmd)
         {
-            _bdCommand = new CommandRepostiory(context);
+            _bdCommand = new CommandRepository(context);
             _cmd = cmd;
         }
 

@@ -1,5 +1,4 @@
 ﻿using TaskDNS.Models;
-using TaskDNS.Models.Dto;
 
 namespace TaskDNS.Controllers.Interface
 {

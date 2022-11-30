@@ -1,0 +1,29 @@
+.console{
+    margin-left: 25%;
+}
+
+.inputConsole{
+    width: 500px;
+    height: 25px;
+    
+    border: none;
+    border-radius: 10px;
+    outline: none;
+
+    font-size: 23px;
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+
+.inputElement{
+    display: flex;
+    width: 100%;
+}
+
+.output{
+    white-space: pre;
+}
+
+.error{
+    color:red;
+}
