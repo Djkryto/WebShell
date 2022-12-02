@@ -85,5 +85,4 @@ app.UseEndpoints(endpoints =>
     endpoints.MapHub<ChatHub>("/chat");
 });
 
-app.MapFallbackToFile("index.html");
 app.Run();

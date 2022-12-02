@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskDNS", "TaskDNS\TaskDNS.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskDNS.Tests", "TaskDNS.Tests\TaskDNS.Tests.csproj", "{EA5DE70B-5577-42BF-A705-0E9D1A24D7EF}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "webshell_front", "webshell_front\webshell_front.esproj", "{C5604529-2634-4F20-90BC-D96A44219993}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,12 @@ Global
 		{EA5DE70B-5577-42BF-A705-0E9D1A24D7EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA5DE70B-5577-42BF-A705-0E9D1A24D7EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA5DE70B-5577-42BF-A705-0E9D1A24D7EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5604529-2634-4F20-90BC-D96A44219993}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5604529-2634-4F20-90BC-D96A44219993}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5604529-2634-4F20-90BC-D96A44219993}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C5604529-2634-4F20-90BC-D96A44219993}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5604529-2634-4F20-90BC-D96A44219993}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5604529-2634-4F20-90BC-D96A44219993}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

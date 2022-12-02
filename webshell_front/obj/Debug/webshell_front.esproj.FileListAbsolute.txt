@@ -1,0 +1,2 @@
+C:\Project\ASP.Net\TestGit\webshell_front\obj\Debug\webshell_front.esproj.SuggestedBindingRedirects.cache
+C:\Project\ASP.Net\TestGit\webshell_front\obj\Debug\webshell_front.esproj.CoreCompileInputs.cache
