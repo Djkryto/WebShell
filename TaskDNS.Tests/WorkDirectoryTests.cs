@@ -1,11 +1,11 @@
 using NUnit.Framework;
 using System.Text;
 using System.Text.Unicode;
-using TaskDNS.Tools;
+using TaskDNS.Application.Processes;
 
 namespace TaskDNS.Tests
 {
-   
+
     public class WorkDirectoryTests
     {
         static object[] Parametrs_WorkDirectory_GetDirectory_TreeString_Ok =
@@ -55,22 +55,12 @@ namespace TaskDNS.Tests
             new object[] { "C:\\", @" CD ", "C:\\" },
         };
 
-        private ProcessCommand process;
-
-        [SetUp]
-        public void Setup()
-        {
-            process = new ProcessCommand();
-        }
-
         [TestCaseSource(nameof(Parametrs_WorkDirectory_GetDirectory_TreeString_Ok))]
         public void WorkDirectory_GetDirectory_TreeString_Ok(string path,string command,string expectedOutput)
         {
-            var result = process.GetDirectory(path, command);
+            var result = ProcessPathHandler.GetDirectory(path, command);
 
             Assert.AreEqual(expectedOutput, result);
         }
-
-      
     }
 }

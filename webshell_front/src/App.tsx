@@ -14,6 +14,5 @@ export const App : FC = () => {
                 <Route path = '*' element= {<Login />}/>
             </Routes>
         </AuthorizationProvider>
-
     );
 }

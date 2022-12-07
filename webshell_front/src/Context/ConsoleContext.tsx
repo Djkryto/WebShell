@@ -1,21 +1,16 @@
 import React,{ createContext, FC, PropsWithChildren, useCallback, useContext, useEffect, useReducer } from 'react'
-import { IConsoleOutputDataReducer } from '../Console/Output/Interface/IConsoleOutputDataReducer'
-import { ConsoleOutputDataReducer } from '../Console/Output/Function/ConsoleOutputDataReducer'
-import { ConsoleDataReducer } from '../Console//Output/Function/ConsoleDataReducer'
-import { IConsoleData } from '../Console//Output/Interface/IConsoleData'
+import { ConsoleOutputReducer } from '../Console/View/Reducers/ConsoleOutputReducer'
+import { ConsoleDataReducer } from '../Console/View/Reducers/ConsoleDataReducer'
 import { TokenContext } from '../Authorization/AuthorizationProvider'
-import { instanceRepository } from '../Server/Command/Repository'
-import { IDataHub } from '../Console/Output/Interface/IDataHub'
+import { IDataView } from '../Console/View/Interface/IDataView'
+import { IDataHub } from '../Console/View/Interface/IDataHub'
+import { ActionKind } from '../Console/View/Enum/ActionKind'
 import { serverHub } from '../Server/WebSoket/Hub'
 
-interface IDataConsole {
-    outputData: IConsoleOutputDataReducer,
-    consoleData: IConsoleData,
-    sendCommand: (text:string) => Promise<void>,
-    stopCommand: () => Promise<void>
-}
-
-const initalDataConsole : IDataConsole = {
+/*
+* Начальное состояние элемента данных для View.
+*/
+const initDataConsole : IDataView = {
     outputData: {
         output: [],
         isDisabledWrite: false
@@ -30,52 +25,58 @@ const initalDataConsole : IDataConsole = {
     stopCommand: async () : Promise<void> =>{}
 }
 
-export const DataConsoleContext = createContext<IDataConsole>(initalDataConsole)
-
+/*
+ * Создание контекст консольных данных.
+ */
+export const DataConsoleContext = createContext<IDataView>(initDataConsole)
+/*
+ * Обертка для передачи данных функциональному компоненту View.
+ */
 export const ConsoleDataProvider : FC<PropsWithChildren> = ({children}) => {
-    const [outputData, dispatchOutput] = useReducer(ConsoleOutputDataReducer,{output: [], isDisabledWrite: false})
-    const [consoleData, dispatchData] = useReducer(ConsoleDataReducer,{ directory: '', history: [], subDirectory: [] })
+    const [outputData, dispatchOutput] = useReducer(ConsoleOutputReducer,{output: [], isDisabledWrite: false})
+    const [consoleData, dispatchConsoleData] = useReducer(ConsoleDataReducer,{ directory: '', history: [], subDirectory: [] })
     const tokenContext = useContext(TokenContext)
-    const dataServer = instanceRepository(tokenContext.token)
 
     useEffect(() => {
         const connectionToServer = async () : Promise<void> => {
-            serverHub.connectionToHubAsync()
-            serverHub.sendCommand(getOutputHub)
+            await serverHub.connectionToHubAsync(tokenContext.isJWT,tokenContext.token)
+            serverHub.getDataFromHub(handleDataHub)
             await getConsoleDataAsync()
         }
         
         connectionToServer()
     }, []) 
-    
+    /*
+    * Отправка комманд серверу.
+    */
     const sendCommand = useCallback(async (text : string): Promise<void> => {
-        await dataServer.postCommandAsync(text.trim())
+        await serverHub.sendCommand(text.trim())
         await getConsoleDataAsync()
-    },[])
-
+    }, [])
+    /*
+    * Отправка комманды на остановку рабочего процесса от веденной прежде комманды.
+    */
     const stopCommand = useCallback(async () : Promise<void> => {
-        await dataServer.stopCommandAsync()
-    },[])
-
-    const getOutputHub = useCallback((dataHub : IDataHub) : void => {
+        await serverHub.stopProcessingCommand()
+    }, [])
+    /*
+    * Получение консольных данных с сервера.
+    */
+    const handleDataHub = useCallback((dataHub : IDataHub) : void => {
         const line = dataHub.output
         const status = dataHub.status
         
-        const isStopWriteUser = dataHub.status === 0? true : false
+        const isStopWriteUser = dataHub.status === 0
         const objectOutput = {status,line}
 
-        if(line !== '')
-            dispatchOutput({type: 'changeAllValue', data: {isDisabledWrite: isStopWriteUser, output: objectOutput}})
+        dispatchOutput({type: ActionKind.ChangeAllValue, data: {isDisabledWrite: isStopWriteUser, output: objectOutput}})
     }, [])
-
+   /*
+    * Получение стороковых данных с сервера.
+    */
     const getConsoleDataAsync = useCallback(async () : Promise<void> => {
-        const currnetDirectory = await dataServer.currnetDirectoryAsync()
-        const subDirectory = await dataServer.subDirectoriesAsync()
-        const history = await dataServer.getHistoryAsync()
-
-        const directory = currnetDirectory.replace('\"','').replace('\"','')
-
-        dispatchData({type: 'changeAllValue', data: {directory, subDirectory, history}})
+        const data = await serverHub.getConsoleData()
+        dispatchConsoleData({type: ActionKind.ChangeAllValue, data})
     }, [])
 
     return(<DataConsoleContext.Provider value={{outputData,consoleData,sendCommand,stopCommand}}>

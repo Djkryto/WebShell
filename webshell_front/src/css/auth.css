@@ -81,3 +81,60 @@ h1,label
 .Error{
     
 }
+
+.CookiePanel{
+    position: absolute;
+
+    top: 50%;
+    right: 50%;
+
+    transform: translateX(50%) translateY(400%);
+
+    display: flex;
+    flex-direction: column;
+    
+    border-radius: 10px;
+    background-color: rgb(41, 41, 41);
+    
+    padding: 10px;
+    width: 475px;
+
+}
+
+.CookieLabel{
+    margin-bottom: 30px;
+}
+
+.CookieButtonContainer{
+    padding-bottom: 10px;
+}
+
+.CookieYes{
+    float: left;
+    margin-left: 50px;
+
+    height: 40px;
+    width: 150px;
+
+    border-radius: 11px;
+
+    outline-color: orange;
+    outline-style: groove;
+
+    font-size: 20px;
+}
+
+.CookieNo{
+    float: right;
+    margin-right: 50px;
+    
+    height: 40px;
+    width: 150px;
+
+    border-radius: 11px;
+
+    outline-color: rgb(38, 157, 255);
+    outline-style: groove;
+
+    font-size: 20px;
+}

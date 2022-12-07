@@ -1,15 +1,16 @@
 import { ConsoleDataProvider } from '../Context/ConsoleContext'
-import { Output } from './Output/Output'
-import { Input } from './Input/Input'
+import { View } from './View/View'
 import React, { FC } from 'react'
 import '../css/console.css'
 
-export const Console : FC = () =>{
+/*
+ *  Функциональный компонент консоль.
+ */
+export const Console : FC = () => {
     return(
         <div className='console'>
             <ConsoleDataProvider>
-                <Output />
-                <Input />
+                <View />
             </ConsoleDataProvider>
         </div>
     )
