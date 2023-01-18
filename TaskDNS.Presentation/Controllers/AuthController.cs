@@ -26,7 +26,7 @@ namespace TaskDNS.Network.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public async Task<IActionResult> LoginAsync([FromBody] ClientDataDto clientData) => Ok(await _authService.AuthAsync(clientData.User.Login, clientData.User.Password, clientData.IsJWT));
+        public async Task<IActionResult> LoginAsync([FromBody] ClientDataDto clientData) => Ok(await _authService.AuthAsync(clientData.Login, clientData.Password, clientData.IsJWT));
 
         /// <summary>
         /// Регистрация пользователя.

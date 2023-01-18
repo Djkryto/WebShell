@@ -3,7 +3,7 @@
 namespace TaskDNS.Database.Model
 {
     /// <summary>
-    /// Класс являющийся моделью пользователей в базе данных.
+    /// Тип данных пользователя.
     /// </summary>
     public class User
     {

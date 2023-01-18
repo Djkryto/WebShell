@@ -12,7 +12,7 @@ export const Register : FC = () =>{
     const navigate = useNavigate()
     const passwordValue = useRef<HTMLInputElement>(null)
     const loginValue = useRef<HTMLInputElement>(null)
-    let data : User = {Id: 0, Login: loginValue.current?.value, Password: passwordValue.current?.value }
+    let data : User = {Login: loginValue.current?.value, Password: passwordValue.current?.value }
 
     return (
         <div className='flex panel'>

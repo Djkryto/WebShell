@@ -6,8 +6,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using TaskDNS.Database.Repository;
 using TaskDNS.Network.SignalRHub;
+using TaskDNS.Application.Model;
 using TaskDNS.Domain.Interface;
-using TaskDNS.Domain.Model;
 using TaskDNS.Database;
 using System.Text;
 

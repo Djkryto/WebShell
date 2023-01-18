@@ -15,12 +15,12 @@ namespace TaskDNS.Network.Dto
         /// <summary>
         /// Статус с вывода.
         /// </summary>
-        public CommandStatus Status { get; set; }
+        public byte Status { get; set; }
 
         /// <summary>
         /// .ctor
         /// </summary>
-        public OutputConsoleDto(string line, CommandStatus status)
+        public OutputConsoleDto(string line, byte status)
         {
             Output = line;
             Status = status;

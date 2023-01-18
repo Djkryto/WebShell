@@ -1,10 +1,10 @@
 ﻿using TaskDNS.Application.Authentication.Encryption;
 using TaskDNS.Authentication.Local_Storage;
-using TaskDNS.Domain.Interface;
-using TaskDNS.Database.Model;
-using TaskDNS.Domain.Model;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
+using TaskDNS.Application.Model;
+using TaskDNS.Domain.Interface;
+using TaskDNS.Database.Model;
 
 namespace TaskDNS.Application.Authentication
 {

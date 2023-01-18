@@ -30,7 +30,7 @@ namespace TaskDNS.Database.Repository
                 _db.SaveChanges();
             });
         }
-
+        ///<inheritdoc />
         public Task<IEnumerable<Token>> GetAllTokensAsync() => Task.Run<IEnumerable<Token>>(() => _db.Tokens);
     }
 }

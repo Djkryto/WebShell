@@ -1,7 +1,7 @@
 ﻿using TaskDNS.Application.Processes.Channels;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 using TaskDNS.Application.Model;
+using System.Diagnostics;
 
 namespace TaskDNS.Application.Processes
 {

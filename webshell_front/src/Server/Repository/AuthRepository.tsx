@@ -30,7 +30,7 @@ class AuthRepository {
     authorization = async (data : User, tokenContext : Token, navigate : NavigateFunction) : Promise<void> => {
         const urlLogin = 'https://localhost:7145/auth/login'
         const isJWT = tokenContext.isJWT;
-        const clientData : ClientData = {User: data, isJWT:isJWT}
+        const clientData : ClientData = {Login: data.Login, Password: data.Password, isJWT:isJWT}
         const responce = await fetch (urlLogin,initFetch(clientData))
         await responce.text().then(
             (promise : string) : void =>{

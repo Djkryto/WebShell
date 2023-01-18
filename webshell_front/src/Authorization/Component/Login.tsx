@@ -9,7 +9,6 @@ import 'ts-replace-all'
  *  Данные пользователя.
  */
 export type User = {
-    Id:number,
     Login:string | undefined,
     Password:string | undefined
 }
@@ -17,7 +16,8 @@ export type User = {
  *  Данные клиента.
  */
 export type ClientData = {
-    User: User,
+    Login:string | undefined,
+    Password:string | undefined,
     isJWT: boolean
 }
 
@@ -40,7 +40,7 @@ export const Login = () => {
                 <label>Пароль</label>
                 <input ref={passwordValue} className = 'input' />
                 <div className='lineBottom'/>
-                <button className='button login' onClick={()=>{AuthRepository.authorization({Id: 0, Login: loginValue.current?.value,Password: passwordValue.current?.value},tokenContext,navigate)}}>Отправить</button>
+                <button className='button login' onClick={()=>{AuthRepository.authorization({Login: loginValue.current?.value,Password: passwordValue.current?.value},tokenContext,navigate)}}>Отправить</button>
                 <button className='button register' onClick={() => window.location.href='/register'}>Регистрация</button>
             </div>
             <CookiePanel />

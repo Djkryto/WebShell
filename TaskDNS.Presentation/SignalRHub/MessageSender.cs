@@ -1,8 +1,8 @@
-﻿using TaskDNS.Application.Processes.Channels;
+﻿using Microsoft.Extensions.DependencyInjection;
+using TaskDNS.Application.Processes.Channels;
 using Microsoft.AspNetCore.SignalR;
-using TaskDNS.Network.Dto;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+using TaskDNS.Network.Dto;
 
 namespace TaskDNS.Network.SignalRHub
 {
@@ -32,7 +32,7 @@ namespace TaskDNS.Network.SignalRHub
 
                     var score = _serviceScopeFactory.CreateScope();
                     var chatHub = score.ServiceProvider.GetService<IHubContext<ChatHub>>();
-                    var output = new OutputConsoleDto(dataOutput.Output, dataOutput.Status);
+                    var output = new OutputConsoleDto(dataOutput.Output, Convert.ToByte(dataOutput.Status));
 
                     await chatHub.Clients.Client(dataOutput.ConnectionId).SendAsync("Send", output);
                 }

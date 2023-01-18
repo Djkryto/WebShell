@@ -8,7 +8,7 @@ namespace TaskDNS.Application.Model
     public class CommandExecutionResult
     {
         /// <summary>
-        /// Статус в данном классе имеет значение Error. 
+        /// Статус комманды. 
         /// </summary>
         public CommandStatus Status { get; private set; }
 

@@ -2,9 +2,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
+using TaskDNS.Application.Model;
 using TaskDNS.Domain.Interface;
 using System.Security.Claims;
-using TaskDNS.Domain.Model;
 using System.Text;
 
 namespace TaskDNS.Authentication.Local_Storage

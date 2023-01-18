@@ -1,11 +1,8 @@
 ﻿using TaskDNS.Application.Authentication.Interface;
 using Microsoft.Extensions.Options;
-using TaskDNS.Domain.Interface;
-using TaskDNS.Domain.Model;
 using Microsoft.AspNetCore.Http;
-//TaskDNS.Domain
-//TaskDNS
-//TaskDNS.Database
+using TaskDNS.Application.Model;
+using TaskDNS.Domain.Interface;
 
 namespace TaskDNS.Authentication.Local_Storage
 {
