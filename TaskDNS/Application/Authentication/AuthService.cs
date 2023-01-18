@@ -1,7 +1,9 @@
 ﻿using TaskDNS.Application.Authentication.Encryption;
 using TaskDNS.Authentication.Local_Storage;
+using Microsoft.Extensions.Options;
 using TaskDNS.Domain.Interface;
 using TaskDNS.Database.Model;
+using TaskDNS.Domain.Model;
 
 namespace TaskDNS.Application.Authentication
 {
@@ -16,11 +18,11 @@ namespace TaskDNS.Application.Authentication
         /// <summary>
         /// .ctor
         /// </summary>
-        public AuthService(IConfiguration configuration, IUserRepository userRepository, IHttpContextAccessor httpContext, ITokenRepository tokenRepository)
+        public AuthService(IOptions<PropertyJWT> jwtOption, IUserRepository userRepository, IHttpContextAccessor httpContext, ITokenRepository tokenRepository)
         {
             _userRepository = userRepository;
 
-            authFactory = new AuthProviderFactory(configuration, userRepository, httpContext, tokenRepository);
+            authFactory = new AuthProviderFactory(jwtOption, userRepository, httpContext, tokenRepository);
         }
 
         /// <summary>

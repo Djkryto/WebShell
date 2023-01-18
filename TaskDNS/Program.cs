@@ -1,19 +1,23 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using TaskDNS.Application.Authentication;
-using TaskDNS.Network.SignalRHub;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 using TaskDNS.Database.Repository;
-using TaskDNS.Database;
+using TaskDNS.Network.SignalRHub;
 using TaskDNS.Domain.Interface;
+using TaskDNS.Domain.Model;
+using TaskDNS.Database;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var MyAllowSpecificOrigins = "Policy";
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+var JwtProperty = builder.Configuration.GetSection("Property-Jwt");
+
+builder.Services.Configure<PropertyJWT>(JwtProperty);
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllersWithViews();
@@ -48,9 +52,9 @@ builder.Services.AddAuthentication(options =>
 {
     o.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidIssuer = builder.Configuration["Issuer"],
-        ValidAudience = builder.Configuration["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtKey"])),
+        ValidIssuer = JwtProperty["Issuer"],
+        ValidAudience = JwtProperty["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtProperty["Key"])),
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = false,

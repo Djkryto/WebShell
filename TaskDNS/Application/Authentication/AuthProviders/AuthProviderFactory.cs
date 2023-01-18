@@ -1,5 +1,7 @@
 ﻿using TaskDNS.Application.Authentication.Interface;
+using Microsoft.Extensions.Options;
 using TaskDNS.Domain.Interface;
+using TaskDNS.Domain.Model;
 
 namespace TaskDNS.Authentication.Local_Storage
 {
@@ -8,7 +10,7 @@ namespace TaskDNS.Authentication.Local_Storage
     /// </summary>
     public class AuthProviderFactory
     {
-        private readonly IConfiguration _configuration;
+        private readonly IOptions<PropertyJWT> _jwtOptions;
         private readonly IUserRepository _userRepository;
         private readonly ITokenRepository _tokenRepository;
         private readonly IHttpContextAccessor _httpContext;
@@ -16,11 +18,11 @@ namespace TaskDNS.Authentication.Local_Storage
         /// <summary>
         /// .ctor
         /// </summary>
-        public AuthProviderFactory(IConfiguration configuration, IUserRepository userRepository, IHttpContextAccessor httpContext,ITokenRepository tokenRepository) 
+        public AuthProviderFactory(IOptions<PropertyJWT> jwtOptions, IUserRepository userRepository, IHttpContextAccessor httpContext,ITokenRepository tokenRepository) 
         {
             _tokenRepository = tokenRepository;
             _userRepository = userRepository;
-            _configuration = configuration;
+            _jwtOptions = jwtOptions;
             _httpContext = httpContext;
         }
 
@@ -32,7 +34,7 @@ namespace TaskDNS.Authentication.Local_Storage
         public IAuthentication CreateInstance(bool isJWT)
         {
             if (isJWT)
-                return new JWTProvider(_configuration,_userRepository,_tokenRepository);
+                return new JWTProvider(_jwtOptions, _userRepository,_tokenRepository);
 
             return new CookieProvider(_httpContext, _userRepository); 
         }

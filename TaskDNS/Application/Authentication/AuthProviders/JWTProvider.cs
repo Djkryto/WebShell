@@ -1,8 +1,10 @@
 ﻿using TaskDNS.Application.Authentication.Interface;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
 using TaskDNS.Domain.Interface;
 using System.Security.Claims;
+using TaskDNS.Domain.Model;
 using System.Text;
 
 namespace TaskDNS.Authentication.Local_Storage
@@ -12,16 +14,16 @@ namespace TaskDNS.Authentication.Local_Storage
     /// </summary>
     public  class JWTProvider : IAuthentication
     {
-        private readonly IConfiguration _configuration;
+        private readonly PropertyJWT _jwtOptions;
         private readonly IUserRepository _userRepository;
         private readonly ITokenRepository _tokenRepository;
 
         /// <summary>
         /// .ctor
         /// </summary>
-        public JWTProvider(IConfiguration configuration,IUserRepository userRepository,ITokenRepository tokenRepository) 
+        public JWTProvider(IOptions<PropertyJWT> jwtOptions, IUserRepository userRepository,ITokenRepository tokenRepository) 
         {
-            _configuration = configuration;
+            _jwtOptions = jwtOptions.Value;
             _userRepository = userRepository;    
             _tokenRepository = tokenRepository;
         }
@@ -57,9 +59,9 @@ namespace TaskDNS.Authentication.Local_Storage
 
         private string CreateToken()
         {
-            var issuer = _configuration["Issuer"];
-            var audience = _configuration["Audience"];
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtKey"]);
+            var issuer = _jwtOptions.Issuer;
+            var audience = _jwtOptions.Audience;
+            var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
