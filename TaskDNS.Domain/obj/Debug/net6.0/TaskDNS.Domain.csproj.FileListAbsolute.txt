@@ -1,0 +1,12 @@
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\obj\Debug\net6.0\TaskDNS.Domain.csproj.AssemblyReference.cache
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\obj\Debug\net6.0\TaskDNS.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\obj\Debug\net6.0\TaskDNS.Domain.AssemblyInfoInputs.cache
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\obj\Debug\net6.0\TaskDNS.Domain.AssemblyInfo.cs
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\obj\Debug\net6.0\TaskDNS.Domain.csproj.CoreCompileInputs.cache
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\bin\Debug\net6.0\TaskDNS.Domain.deps.json
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\bin\Debug\net6.0\TaskDNS.Domain.dll
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\bin\Debug\net6.0\TaskDNS.Domain.pdb
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\obj\Debug\net6.0\TaskDNS.Domain.dll
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\obj\Debug\net6.0\refint\TaskDNS.Domain.dll
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\obj\Debug\net6.0\TaskDNS.Domain.pdb
+C:\Project\ASP.Net\TestGit\TaskDNS.Domain\obj\Debug\net6.0\ref\TaskDNS.Domain.dll

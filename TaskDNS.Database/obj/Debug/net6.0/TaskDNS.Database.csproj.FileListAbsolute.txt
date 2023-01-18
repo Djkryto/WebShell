@@ -1,0 +1,17 @@
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\obj\Debug\net6.0\TaskDNS.Database.csproj.AssemblyReference.cache
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\obj\Debug\net6.0\TaskDNS.Database.GeneratedMSBuildEditorConfig.editorconfig
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\obj\Debug\net6.0\TaskDNS.Database.AssemblyInfoInputs.cache
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\obj\Debug\net6.0\TaskDNS.Database.AssemblyInfo.cs
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\obj\Debug\net6.0\TaskDNS.Database.csproj.CoreCompileInputs.cache
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\bin\Debug\net6.0\TaskDNS.Database.deps.json
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\bin\Debug\net6.0\TaskDNS.Database.runtimeconfig.json
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\bin\Debug\net6.0\TaskDNS.Database.dll
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\bin\Debug\net6.0\TaskDNS.Database.pdb
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\bin\Debug\net6.0\TaskDNS.Domain.dll
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\bin\Debug\net6.0\TaskDNS.Domain.pdb
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\obj\Debug\net6.0\TaskDNS.Database.csproj.CopyComplete
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\obj\Debug\net6.0\TaskDNS.Database.dll
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\obj\Debug\net6.0\refint\TaskDNS.Database.dll
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\obj\Debug\net6.0\TaskDNS.Database.pdb
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\obj\Debug\net6.0\TaskDNS.Database.genruntimeconfig.cache
+C:\Project\ASP.Net\TestGit\TaskDNS.Database\obj\Debug\net6.0\ref\TaskDNS.Database.dll

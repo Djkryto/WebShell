@@ -40,7 +40,6 @@ builder.Services.AddMvc(options => options.EnableEndpointRouting = false);
 builder.Services.AddSignalR();
 builder.Services.AddHostedService<MessageSender>();
 
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
