@@ -35,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TaskDNS.Database\TaskDNS.Database.csproj" />
     <ProjectReference Include="..\TaskDNS.Presentation\TaskDNS.Presentation.csproj" />
   </ItemGroup>
 	

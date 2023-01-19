@@ -10,10 +10,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TaskDNS.Database\TaskDNS.Database.csproj" />
+    <ProjectReference Include="..\TaskDNS.Domain\TaskDNS.Domain.csproj" />
   </ItemGroup>
 
 </Project>

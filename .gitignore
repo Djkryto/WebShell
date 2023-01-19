@@ -1,0 +1,10 @@
+/TaskDNS.Application/bin
+/TaskDNS.Application/obj
+/TaskDNS.Database/obj
+/TaskDNS.Database/bin
+/TaskDNS.Domain/obj
+/TaskDNS.Domain/bin
+/TaskDNS.Presentation/obj
+/TaskDNS.Presentation/bin
+/webshell_front/node_modules
+/webshell_front/obj

@@ -1,4 +1,5 @@
-﻿using TaskDNS.Database.Model;
+﻿using System.Text.Json.Serialization;
+using TaskDNS.Database.Model;
 
 namespace TaskDNS.Network.Dto
 {
@@ -10,6 +11,7 @@ namespace TaskDNS.Network.Dto
         /// <summary>
         /// Текст комманды.
         /// </summary>
+        [JsonPropertyName("textcommand")]
         public string TextCommand { get; }
 
         /// <summary>

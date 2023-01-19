@@ -39,7 +39,6 @@ namespace TaskDNS.Network.SignalRHub
 
             _userCMD[connectionId].Dispose();
             _userCMD.Remove(connectionId);
-            await RemoveHistoryCommandUser(connectionId);
         }
 
         /// <summary>
